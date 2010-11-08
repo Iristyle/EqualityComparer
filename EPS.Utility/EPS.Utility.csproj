@@ -12,6 +12,7 @@
     <AssemblyName>EPS.Utility</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,11 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\NaturalSortComparer.cs" />
-    <Compile Include="Configuration\ConfigurationManagerWrapper.cs" />
+    <Compile Include="Configuration\Abstractions\ConfigurationManagerWrapper.cs" />
     <Compile Include="Configuration\Abstractions\ConnectionStringSettingsWrapper.cs" />
     <Compile Include="Configuration\Abstractions\IConfigurationManager.cs" />
     <Compile Include="Configuration\Abstractions\IConnectionStringSettings.cs" />
     <Compile Include="Configuration\ConfigurationElementCollection.cs" />
+    <Compile Include="Conversions\StringConversions.cs" />
     <Compile Include="Diagnostics\DebugTextWriter.cs" />
     <Compile Include="Diagnostics\LogMethodAttribute.cs" />
     <Compile Include="Diagnostics\Log4NetWriter.cs" />
@@ -58,6 +60,7 @@
     <Compile Include="Linq\Expressions\ExpressionVisitor.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitorBase.cs" />
     <Compile Include="Linq\LinqExtensions.cs" />
+    <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="Reflection\Emit\RuntimeTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\Emit\TypeBuilderExtensions.cs" />
