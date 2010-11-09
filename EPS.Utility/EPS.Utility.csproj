@@ -39,6 +39,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,13 +50,19 @@
     <Compile Include="Configuration\Abstractions\ConfigurationManagerWrapper.cs" />
     <Compile Include="Configuration\Abstractions\ConnectionStringSettingsWrapper.cs" />
     <Compile Include="Configuration\Abstractions\IConfigurationManager.cs" />
+    <Compile Include="Configuration\Abstractions\IConfigurationSectionGroup.cs" />
     <Compile Include="Configuration\Abstractions\IConnectionStringSettings.cs" />
     <Compile Include="Configuration\ConfigurationElementCollection.cs" />
+    <Compile Include="Configuration\EnumConverter.cs" />
+    <Compile Include="Conversions\FileSizeFormatter.cs" />
     <Compile Include="Conversions\StringConversions.cs" />
     <Compile Include="Diagnostics\DebugTextWriter.cs" />
     <Compile Include="Diagnostics\LogMethodAttribute.cs" />
     <Compile Include="Diagnostics\Log4NetWriter.cs" />
     <Compile Include="Diagnostics\LogHelper.cs" />
+    <Compile Include="Dynamic\ObjectExtensions.cs" />
+    <Compile Include="EnumExtensions.cs" />
+    <Compile Include="IO\StreamExtensions.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitor.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitorBase.cs" />
@@ -66,7 +73,7 @@
     <Compile Include="Reflection\Emit\TypeBuilderExtensions.cs" />
     <Compile Include="Reflection\ExtensionMethodSearcher.cs" />
     <Compile Include="Reflection\TypeExtensions.cs" />
-    <Compile Include="Security\Cryptography\MD5Helpers.cs" />
+    <Compile Include="Security\Cryptography\HashHelpers.cs" />
     <Compile Include="Security\LogHelpers.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Text\EnumDescriptionAttribute.cs" />
@@ -74,11 +81,12 @@
     <Compile Include="Text\EnumValueAttribute.cs" />
     <Compile Include="Text\EnumValueAttributeExtensions.cs" />
     <Compile Include="Text\GuidHelper.cs" />
-    <Compile Include="Text\RegularExpressions.cs" />
+    <Compile Include="Text\Patterns.cs" />
     <Compile Include="Text\SubstringMatchedString.cs" />
     <Compile Include="Text\SubstringMatchListStringComparer.cs" />
     <Compile Include="Text\WordBreakRegexComparer.cs" />
     <Compile Include="Text\WordBreakStringComparer.cs" />
+    <Compile Include="Threading\ThreadPool.cs" />
     <Compile Include="Windows\Security\WindowsIdentityExtensions.cs" />
     <Compile Include="Windows\Security\WindowsPrincipalExtensions.cs" />
   </ItemGroup>
