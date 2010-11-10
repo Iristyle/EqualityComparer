@@ -41,6 +41,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
@@ -73,6 +74,8 @@
     <Compile Include="Reflection\Emit\TypeBuilderExtensions.cs" />
     <Compile Include="Reflection\ExtensionMethodSearcher.cs" />
     <Compile Include="Reflection\TypeExtensions.cs" />
+    <Compile Include="Runtime\Serialization\Json\JsonExtensions.cs" />
+    <Compile Include="Runtime\Serialization\Json\ObjectExtensions.cs" />
     <Compile Include="Security\Cryptography\HashHelpers.cs" />
     <Compile Include="Security\LogHelpers.cs" />
     <Compile Include="StringExtensions.cs" />
@@ -90,7 +93,9 @@
     <Compile Include="Windows\Security\WindowsIdentityExtensions.cs" />
     <Compile Include="Windows\Security\WindowsPrincipalExtensions.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Runtime\Caching\Configuration\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
