@@ -49,6 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Build\SharedAssemblyVersioning.cs">
+      <Link>Properties\SharedAssemblyVersioning.cs</Link>
+    </Compile>
     <Compile Include="Collections\NaturalSortComparer.cs" />
     <Compile Include="Configuration\Abstractions\ConfigurationManagerWrapper.cs" />
     <Compile Include="Configuration\Abstractions\ConnectionStringSettingsWrapper.cs" />
