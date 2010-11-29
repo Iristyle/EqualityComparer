@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("EPS.Utility")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("EPS.Utility")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
