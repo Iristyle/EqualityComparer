@@ -15,7 +15,7 @@ namespace EPS.Reflection
         /// <summary>   Gets the extension methods available in all currently loaded assemblies within the AppDomain that apply to a given type. </summary>
         /// <remarks>   ebrown, 11/9/2010. </remarks>
         /// <typeparam name="T">    The Type to inspect. </typeparam>
-        /// <returns>   A List&lt;MethodInfo&gt; with all the extension methods. </returns>
+        /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         public static List<MethodInfo> GetExtensionMethodsInCurrentAssemblies<T>()
         {
             return GetExtensionMethodsInCurrentAssemblies(typeof(T));
@@ -25,7 +25,7 @@ namespace EPS.Reflection
         /// <remarks>   ebrown, 11/9/2010. </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
-        /// <returns>   A List&lt;MethodInfo&gt; with all the extension methods. </returns>
+        /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         public static List<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType)
         {
             if (null == extendedType)
@@ -46,7 +46,7 @@ namespace EPS.Reflection
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
         /// <param name="selector">     The filtering function used to inspect the methods when building the list. </param>
-        /// <returns>   A List&lt;MethodInfo&gt; with all the extension methods. </returns>
+        /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         public static List<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType, Func<MethodInfo, bool> selector)
         {
             if (null == extendedType)
@@ -69,7 +69,7 @@ namespace EPS.Reflection
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="assembly">     The given assembly. </param>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
-        /// <returns>   A List&lt;MethodInfo&gt; with all the extension methods. </returns>
+        /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         public static IEnumerable<MethodInfo> GetExtensionMethods(this Assembly assembly, Type extendedType)
         {
             if (null == assembly)
@@ -92,7 +92,7 @@ namespace EPS.Reflection
         /// <param name="assembly">     The given assembly. </param>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
         /// <param name="selector">     The filtering function used to inspect the methods when building the list. </param>
-        /// <returns>   A List&lt;MethodInfo&gt; with all the extension methods. </returns>
+        /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         public static IEnumerable<MethodInfo> GetExtensionMethods(this Assembly assembly, Type extendedType, Func<MethodInfo, bool> selector)
         {
             if (null == assembly)
