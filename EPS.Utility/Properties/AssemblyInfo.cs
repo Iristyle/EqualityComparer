@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("EPS.Utility")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyProduct("EPS.Utility")]
-[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
