@@ -61,6 +61,7 @@
     <Compile Include="Configuration\ConfigurationElementCollection.cs" />
     <Compile Include="Configuration\EnumConverter.cs" />
     <Compile Include="Conversions\FileSizeFormatter.cs" />
+    <Compile Include="Conversions\SafeConvert.cs" />
     <Compile Include="Conversions\StringConversions.cs" />
     <Compile Include="Diagnostics\DebugTextWriter.cs" />
     <Compile Include="Diagnostics\LogMethodAttribute.cs" />
