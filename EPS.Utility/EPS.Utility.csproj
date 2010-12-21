@@ -96,6 +96,7 @@
     <Compile Include="Text\WordBreakRegexComparer.cs" />
     <Compile Include="Text\WordBreakStringComparer.cs" />
     <Compile Include="Threading\ThreadPool.cs" />
+    <Compile Include="UriExtensions.cs" />
     <Compile Include="Windows\Security\WindowsIdentityExtensions.cs" />
     <Compile Include="Windows\Security\WindowsPrincipalExtensions.cs" />
   </ItemGroup>
