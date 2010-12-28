@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -48,7 +49,7 @@ namespace EPS.Reflection
 
             var interfaces = concreteType.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType).ToList();
             if (interfaces.Count == 0)
-                throw new ArgumentException(String.Format("Interface {0} not implemented by {1}", interfaceType, concreteType), "concreteType");
+                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Interface {0} not implemented by {1}", interfaceType, concreteType), "concreteType");
 
             return interfaces[0].GetGenericArguments();
         }
@@ -63,20 +64,25 @@ namespace EPS.Reflection
             if (type == null)
                 throw new ArgumentNullException("type");
 
+            string typeName = type.Name;
             // HACK: The only way to detect anonymous types right now.
             return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
-                       && type.IsGenericType && type.Name.Contains("AnonymousType")
-                       && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
+                       && type.IsGenericType && typeName.Contains("AnonymousType")
+                       && (typeName.StartsWith("<>", StringComparison.InvariantCultureIgnoreCase) || typeName.StartsWith("VB$", StringComparison.InvariantCulture))
                        && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
 
         /// <summary>   Determines whether the specified object is anonymous. </summary>
         /// <remarks>   ebrown, 11/9/2010. </remarks>
-        /// <param name="o">    The object to inspect. </param>
+        /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
+        /// <param name="value">    The object to inspect. </param>
         /// <returns>   <c>true</c> if the specified object is based on an anonymous type; otherwise, <c>false</c>. </returns>
-        public static bool IsAnonymous(this object o)
+        public static bool IsAnonymous(this object value)
         {
-            return IsAnonymous(o.GetType());
+            if (null == value)
+                throw new ArgumentNullException("value");
+
+            return IsAnonymous(value.GetType());
         }
     }
 }
