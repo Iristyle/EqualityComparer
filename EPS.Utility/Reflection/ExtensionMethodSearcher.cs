@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -13,20 +14,22 @@ namespace EPS.Reflection
     public static class ExtensionMethodSearcher
     {
         /// <summary>   Gets the extension methods available in all currently loaded assemblies within the AppDomain that apply to a given type. </summary>
-        /// <remarks>   ebrown, 11/9/2010. </remarks>
+        /// <remarks>   Collection is not cached. ebrown, 11/9/2010. </remarks>
         /// <typeparam name="T">    The Type to inspect. </typeparam>
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
-        public static List<MethodInfo> GetExtensionMethodsInCurrentAssemblies<T>()
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Convenience Overload / Acceptable usage since we're dealing with Types")]
+        [SuppressMessage("Gendarme.Rules.Design.Generic", "AvoidMethodWithUnusedGenericTypeRule", Justification = "Convenience Overload / Acceptable usage since we're dealing with Types")]        
+        public static IList<MethodInfo> GetExtensionMethodsInCurrentAssemblies<T>()
         {
             return GetExtensionMethodsInCurrentAssemblies(typeof(T));
         }
 
         /// <summary>   Gets the extension methods available in all currently loaded assemblies within the AppDomain that apply to a given type. </summary>
-        /// <remarks>   ebrown, 11/9/2010. </remarks>
+        /// <remarks>   Collection is not cached.  ebrown, 11/9/2010. </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
-        public static List<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType)
+        public static IList<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType)
         {
             if (null == extendedType)
                 throw new ArgumentNullException("extendedType");
@@ -42,12 +45,12 @@ namespace EPS.Reflection
         }
 
         /// <summary>   Gets the extension methods available in all currently loaded assemblies within the AppDomain that apply to a given type. </summary>
-        /// <remarks>   ebrown, 11/9/2010. </remarks>
+        /// <remarks>   Collection is not cached.  ebrown, 11/9/2010. </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
         /// <param name="selector">     The filtering function used to inspect the methods when building the list. </param>
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
-        public static List<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType, Func<MethodInfo, bool> selector)
+        public static IList<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType, Func<MethodInfo, bool> selector)
         {
             if (null == extendedType)
                 throw new ArgumentNullException("extendedType");
@@ -65,7 +68,7 @@ namespace EPS.Reflection
         }
 
         /// <summary>   Gets the extension methods available in a given assembly that apply to a given type. </summary>
-        /// <remarks>   ebrown, 11/9/2010. </remarks>
+        /// <remarks>   IEnumerable is not cached.  ebrown, 11/9/2010. </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="assembly">     The given assembly. </param>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
@@ -87,7 +90,7 @@ namespace EPS.Reflection
         }
 
         /// <summary>   Gets the extension methods available in a given assembly that apply to a given type. </summary>
-        /// <remarks>   ebrown, 11/9/2010. </remarks>
+        /// <remarks>   IEnumerable is not cached.  ebrown, 11/9/2010. </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="assembly">     The given assembly. </param>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
