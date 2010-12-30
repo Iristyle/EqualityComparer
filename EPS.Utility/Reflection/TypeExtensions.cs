@@ -68,7 +68,7 @@ namespace EPS.Reflection
             // HACK: The only way to detect anonymous types right now.
             return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
                        && type.IsGenericType && typeName.Contains("AnonymousType")
-                       && (typeName.StartsWith("<>", StringComparison.InvariantCultureIgnoreCase) || typeName.StartsWith("VB$", StringComparison.InvariantCulture))
+                       && (typeName.StartsWith("<>", StringComparison.OrdinalIgnoreCase) || typeName.StartsWith("VB$", StringComparison.OrdinalIgnoreCase))
                        && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
 
