@@ -17,8 +17,8 @@ namespace EPS.Reflection
         /// <remarks>   Collection is not cached. ebrown, 11/9/2010. </remarks>
         /// <typeparam name="T">    The Type to inspect. </typeparam>
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Scope = "method", Justification = "Convenience Overload / Acceptable usage since we're dealing with Types")]
-        [SuppressMessage("Gendarme.Rules.Design.Generic", "AvoidMethodWithUnusedGenericTypeRule")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Convenience Overload / Acceptable usage since we're dealing with Types")]
+        [SuppressMessage("Gendarme.Rules.Design.Generic", "AvoidMethodWithUnusedGenericTypeRule", Justification = "Convenience Overload / Acceptable usage since we're dealing with Types")]
         public static IList<MethodInfo> GetExtensionMethodsInCurrentAssemblies<T>()
         {
             return GetExtensionMethodsInCurrentAssemblies(typeof(T));
