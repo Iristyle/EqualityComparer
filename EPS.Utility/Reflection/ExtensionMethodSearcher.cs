@@ -31,8 +31,7 @@ namespace EPS.Reflection
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         public static IList<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType)
         {
-            if (null == extendedType)
-                throw new ArgumentNullException("extendedType");
+            if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
 
             List<MethodInfo> methods = new List<MethodInfo>();
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsParallel())
@@ -52,10 +51,8 @@ namespace EPS.Reflection
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         public static IList<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType, Func<MethodInfo, bool> selector)
         {
-            if (null == extendedType)
-                throw new ArgumentNullException("extendedType");
-            if (null == selector)
-                throw new ArgumentNullException("selector");
+            if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
+            if (null == selector) { throw new ArgumentNullException("selector"); }
 
             List<MethodInfo> methods = new List<MethodInfo>();
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsParallel())
@@ -75,10 +72,8 @@ namespace EPS.Reflection
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         public static IEnumerable<MethodInfo> GetExtensionMethods(this Assembly assembly, Type extendedType)
         {
-            if (null == assembly)
-                throw new ArgumentNullException("assembly");
-            if (null == extendedType)
-                throw new ArgumentNullException("extendedType");
+            if (null == assembly) { throw new ArgumentNullException("assembly"); }
+            if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
 
             var query = from type in assembly.GetTypes().AsParallel()
                         where type.IsSealed && !type.IsGenericType && !type.IsNested
@@ -98,12 +93,9 @@ namespace EPS.Reflection
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         public static IEnumerable<MethodInfo> GetExtensionMethods(this Assembly assembly, Type extendedType, Func<MethodInfo, bool> selector)
         {
-            if (null == assembly)
-                throw new ArgumentNullException("assembly");
-            if (null == extendedType)
-                throw new ArgumentNullException("extendedType");
-            if (null == selector)
-                throw new ArgumentNullException("selector");
+            if (null == assembly) { throw new ArgumentNullException("assembly"); }
+            if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
+            if (null == selector) { throw new ArgumentNullException("selector"); }
 
             var query = from type in assembly.GetTypes().AsParallel()
                         where type.IsSealed && !type.IsGenericType && !type.IsNested
