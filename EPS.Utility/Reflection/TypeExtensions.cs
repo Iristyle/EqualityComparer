@@ -20,8 +20,8 @@ namespace EPS.Reflection
         /// <returns>   <c>true</c> if the concrete type specified implements the interface type specified; otherwise, <c>false</c>. </returns>
         public static bool IsGenericInterfaceAssignableFrom(this Type interfaceType, Type concreteType)
         {
-            if (null == interfaceType) throw new ArgumentNullException("interfaceType");
-            if (null == concreteType) throw new ArgumentNullException("concreteType");
+            if (null == interfaceType) { throw new ArgumentNullException("interfaceType"); }
+            if (null == concreteType) { throw new ArgumentNullException("concreteType"); }
             
             if (!interfaceType.IsGenericType || !interfaceType.IsInterface)
                 throw new ArgumentException("interfaceType must be a generic interface such as IInterface<T>");
@@ -41,15 +41,19 @@ namespace EPS.Reflection
         /// <returns>   An enumeration of the Types being used in the generic interface declaration. </returns>
         public static IEnumerable<Type> GetGenericInterfaceTypeParameters(this Type interfaceType, Type concreteType)
         {
-            if (null == interfaceType) throw new ArgumentNullException("interfaceType");
-            if (null == concreteType) throw new ArgumentNullException("concreteType");
+            if (null == interfaceType) { throw new ArgumentNullException("interfaceType"); }
+            if (null == concreteType) { throw new ArgumentNullException("concreteType"); }
 
             if (!interfaceType.IsGenericType || !interfaceType.IsInterface)
+            {
                 throw new ArgumentException("interfaceType must be a generic interface such as IInterface<T>");
+            }
 
             var interfaces = concreteType.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType).ToList();
             if (interfaces.Count == 0)
+            {
                 throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Interface {0} not implemented by {1}", interfaceType, concreteType), "concreteType");
+            }
 
             return interfaces[0].GetGenericArguments();
         }
@@ -61,8 +65,7 @@ namespace EPS.Reflection
         /// <returns>   <c>true</c> if the specified type is anonymous; otherwise, <c>false</c>. </returns>
         public static bool IsAnonymous(this Type type)
         {
-            if (type == null)
-                throw new ArgumentNullException("type");
+            if (type == null) { throw new ArgumentNullException("type"); }
 
             string typeName = type.Name;
             // HACK: The only way to detect anonymous types right now.
@@ -79,8 +82,7 @@ namespace EPS.Reflection
         /// <returns>   <c>true</c> if the specified object is based on an anonymous type; otherwise, <c>false</c>. </returns>
         public static bool IsAnonymous(this object value)
         {
-            if (null == value)
-                throw new ArgumentNullException("value");
+            if (null == value) { throw new ArgumentNullException("value"); }
 
             return IsAnonymous(value.GetType());
         }
