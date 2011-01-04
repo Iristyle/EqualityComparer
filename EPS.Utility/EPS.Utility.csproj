@@ -23,7 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\EPS.Utility.XML</DocumentationFile>
-	<CodeAnalysisRuleSet>..\Build\FxCopRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\Build\FxCopRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -34,7 +34,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\EPS.Utility.XML</DocumentationFile>
-	<CodeAnalysisRuleSet>..\Build\FxCopRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\Build\FxCopRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
@@ -97,8 +97,8 @@
     <Compile Include="Text\Patterns.cs" />
     <Compile Include="Text\SubstringMatchedString.cs" />
     <Compile Include="Text\SubstringMatchListStringComparer.cs" />
-    <Compile Include="Text\WordBreakRegexComparer.cs" />
-    <Compile Include="Text\WordBreakStringComparer.cs" />
+    <Compile Include="Text\WordbreakRegexComparer.cs" />
+    <Compile Include="Text\WordbreakStringComparer.cs" />
     <Compile Include="Threading\ThreadPool.cs" />
     <Compile Include="UriExtensions.cs" />
     <Compile Include="Windows\Security\WindowsIdentityExtensions.cs" />
