@@ -77,7 +77,7 @@
     <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitor.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitorBase.cs" />
-    <Compile Include="Linq\LinqExtensions.cs" />
+    <Compile Include="Linq\Extensions.cs" />
     <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="Reflection\Emit\RuntimeTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
