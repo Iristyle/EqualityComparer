@@ -19,9 +19,9 @@ namespace EPS.Reflection
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Convenience Overload / Acceptable usage since we're dealing with Types")]
         [SuppressMessage("Gendarme.Rules.Design.Generic", "AvoidMethodWithUnusedGenericTypeRule", Justification = "Convenience Overload / Acceptable usage since we're dealing with Types")]
-        public static IList<MethodInfo> GetExtensionMethodsInCurrentAssemblies<T>()
+        public static IList<MethodInfo> GetExtensionMethodsForCurrentAssemblies<T>()
         {
-            return GetExtensionMethodsInCurrentAssemblies(typeof(T));
+            return GetExtensionMethodsForCurrentAssemblies(typeof(T));
         }
 
         /// <summary>   Gets the extension methods available in all currently loaded assemblies within the AppDomain that apply to a given type. </summary>
@@ -29,7 +29,7 @@ namespace EPS.Reflection
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
-        public static IList<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType)
+        public static IList<MethodInfo> GetExtensionMethodsForCurrentAssemblies(this Type extendedType)
         {
             if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
 
@@ -49,7 +49,7 @@ namespace EPS.Reflection
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
         /// <param name="selector">     The filtering function used to inspect the methods when building the list. </param>
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
-        public static IList<MethodInfo> GetExtensionMethodsInCurrentAssemblies(this Type extendedType, Func<MethodInfo, bool> selector)
+        public static IList<MethodInfo> GetExtensionMethodsForCurrentAssemblies(this Type extendedType, Func<MethodInfo, bool> selector)
         {
             if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
             if (null == selector) { throw new ArgumentNullException("selector"); }

@@ -37,14 +37,14 @@ namespace EPS.Reflection.Tests.Unit
         [Fact]
         public void CanFindExtensionMethodsInAllAssemblies()
         {
-            var extensionMethods = typeof(FakeType).GetExtensionMethodsInCurrentAssemblies().ToList();
+            var extensionMethods = typeof(FakeType).GetExtensionMethodsForCurrentAssemblies().ToList();
             Assert.Equal(1, extensionMethods.Count);
         }
 
         [Fact]
         public void CanFindExtensionMethodsInAllAssembliesWithFilter()
         {
-            var extensionMethods = typeof(FakeType).GetExtensionMethodsInCurrentAssemblies(m => m.ReturnType == typeof(bool)).ToList();
+            var extensionMethods = typeof(FakeType).GetExtensionMethodsForCurrentAssemblies(m => m.ReturnType == typeof(bool)).ToList();
             //we have at least our test extension method above -- who knows how many others return booleans ;0
             Assert.True(extensionMethods.Count >= 1);
         }
@@ -58,10 +58,10 @@ namespace EPS.Reflection.Tests.Unit
             Assert.Throws<ArgumentNullException>(() => Assembly.GetExecutingAssembly().GetExtensionMethods(null, m => true ));
             Assert.Throws<ArgumentNullException>(() => Assembly.GetExecutingAssembly().GetExtensionMethods(null, null));
 
-            Assert.Throws<ArgumentNullException>(() => ExtensionMethodSearcher.GetExtensionMethodsInCurrentAssemblies(null));
-            Assert.Throws<ArgumentNullException>(() => ExtensionMethodSearcher.GetExtensionMethodsInCurrentAssemblies(typeof(FakeType), null));
-            Assert.Throws<ArgumentNullException>(() => ExtensionMethodSearcher.GetExtensionMethodsInCurrentAssemblies(null, m => true));
-            Assert.Throws<ArgumentNullException>(() => ExtensionMethodSearcher.GetExtensionMethodsInCurrentAssemblies(null, null));
+            Assert.Throws<ArgumentNullException>(() => ExtensionMethodSearcher.GetExtensionMethodsForCurrentAssemblies(null));
+            Assert.Throws<ArgumentNullException>(() => ExtensionMethodSearcher.GetExtensionMethodsForCurrentAssemblies(typeof(FakeType), null));
+            Assert.Throws<ArgumentNullException>(() => ExtensionMethodSearcher.GetExtensionMethodsForCurrentAssemblies(null, m => true));
+            Assert.Throws<ArgumentNullException>(() => ExtensionMethodSearcher.GetExtensionMethodsForCurrentAssemblies(null, null));
         }
 
 
