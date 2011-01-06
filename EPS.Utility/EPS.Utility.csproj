@@ -115,4 +115,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <UsingTask AssemblyFile="..\..\tools\Gendarme-2.8.0.0\GendarmeMsBuild.dll" TaskName="GendarmeMsBuild.Gendarme"/>
+  <Target Name="AfterBuild">
+	<Gendarme Condition="$(RunCodeAnalysis)" Assemblies="$(TargetPath)" IntegrateWithVisualStudio="True"
+		GendarmeExeFilename="..\..\tools\Gendarme-2.8.0.0\gendarme.exe" 
+		GendarmeConfigFilename="..\Build\gendarme-rules.xml" Ruleset="EPS" />
+  </Target>
 </Project>
