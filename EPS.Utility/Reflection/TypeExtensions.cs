@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -80,6 +81,7 @@ namespace EPS.Reflection
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="value">    The object to inspect. </param>
         /// <returns>   <c>true</c> if the specified object is based on an anonymous type; otherwise, <c>false</c>. </returns>
+        [SuppressMessage("Gendarme.Rules.Design.Linq", "AvoidExtensionMethodOnSystemObjectRule", Justification = "Someone cares about VB.Net?")]
         public static bool IsAnonymous(this object value)
         {
             if (null == value) { throw new ArgumentNullException("value"); }
