@@ -20,18 +20,9 @@ namespace EPS.Reflection
         /// <param name="concreteType">     The concrete object Type to examine. </param>
         /// <returns>   <c>true</c> if the concrete type specified implements the interface type specified; otherwise, <c>false</c>. </returns>
         public static bool IsGenericInterfaceAssignableFrom(this Type interfaceType, Type concreteType)
-        {
-            if (null == interfaceType) { throw new ArgumentNullException("interfaceType"); }
-            if (null == concreteType) { throw new ArgumentNullException("concreteType"); }
-
-            if (!interfaceType.IsGenericType || !interfaceType.IsInterface)
-            {
-                throw new ArgumentException("interfaceType must be a generic interface such as IInterface<T>");
-            }
-
-            return concreteType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType);
+        {            
+            return GetGenericInterfaces(interfaceType, concreteType).Any();
         }
-
         
         /// <summary>   
         /// For a given type implementing a specified interface, where the interface *must* be generic, this returns the parameters passed to the
@@ -44,6 +35,17 @@ namespace EPS.Reflection
         /// <param name="concreteType">     The concrete object Type to examine. </param>
         /// <returns>   An enumeration of the Types being used in the generic interface declaration. </returns>
         public static IEnumerable<Type> GetGenericInterfaceTypeParameters(this Type interfaceType, Type concreteType)
+        {            
+            var implementedInterface = GetGenericInterfaces(interfaceType, concreteType).FirstOrDefault();
+            if (implementedInterface == default(Type))
+            {
+                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Interface {0} not implemented by {1}", interfaceType, concreteType), "concreteType");
+            }
+
+            return implementedInterface.GetGenericArguments();
+        }
+
+        private static IEnumerable<Type> GetGenericInterfaces(Type interfaceType, Type concreteType)
         {
             if (null == interfaceType) { throw new ArgumentNullException("interfaceType"); }
             if (null == concreteType) { throw new ArgumentNullException("concreteType"); }
@@ -53,15 +55,8 @@ namespace EPS.Reflection
                 throw new ArgumentException("interfaceType must be a generic interface such as IInterface<T>");
             }
 
-            var implementedInterface = concreteType.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType);
-            if (implementedInterface == default(Type))
-            {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Interface {0} not implemented by {1}", interfaceType, concreteType), "concreteType");
-            }
-
-            return implementedInterface.GetGenericArguments();
+            return concreteType.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType);
         }
-
         /// <summary>   Determines whether the specified type is anonymous. </summary>
         /// <remarks>   ebrown, 11/9/2010. </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
