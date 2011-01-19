@@ -123,5 +123,22 @@ namespace EPS.Reflection.Tests.Unit
             Assert.True(types[typeof(A)] == 3);
             Assert.True(types[typeof(object)] == 4);
         }
+
+        class D : IMarker, IDisposable
+        {
+            public void Dispose() { }
+        }
+
+        [Fact]
+        public void GetAllBaseTypesAndInterfaces_FindsAllDerivationsAcrossAssemblies()
+        {
+            var types = typeof(D).GetAllBaseTypesAndInterfaces();
+
+            Assert.Equal(4, types.Count);
+            Assert.True(types[typeof(D)] == 0);
+            Assert.True(types[typeof(IDisposable)] == 1);
+            Assert.True(types[typeof(IMarker)] == 1);
+            Assert.True(types[typeof(object)] == 2);
+        }
     }
 }
