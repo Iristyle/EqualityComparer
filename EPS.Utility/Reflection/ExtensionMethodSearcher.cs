@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
+//TODO: seriously consider doing some caching here so that we're not constantly performing reflection
 namespace EPS.Reflection
 {
     /// <summary>
@@ -19,92 +20,100 @@ namespace EPS.Reflection
         /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Convenience Overload / Acceptable usage since we're dealing with Types")]
         [SuppressMessage("Gendarme.Rules.Design.Generic", "AvoidMethodWithUnusedGenericTypeRule", Justification = "Convenience Overload / Acceptable usage since we're dealing with Types")]
-        public static IList<MethodInfo> GetExtensionMethodsForCurrentAssemblies<T>()
+        public static IEnumerable<MethodInfo> GetExtensionMethodsForCurrentAssemblies<T>()
         {
             return GetExtensionMethodsForCurrentAssemblies(typeof(T));
         }
 
         /// <summary>   Gets the extension methods available in all currently loaded assemblies within the AppDomain that apply to a given type. </summary>
-        /// <remarks>   Collection is not cached.  ebrown, 11/9/2010. </remarks>
+        /// <remarks>   
+        /// IEnumerable is not cached.  Given Type is explored for all derived types and interfaces. Items are returned in alphabetical order
+        /// after the following order:
+        /// - Extensions that apply to the specified type
+        /// - Extensions that apply to interfaces implemented by the specified type
+        /// - Extensions apply to each derived type, in order of derivation. 
+        /// </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
-        /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
-        public static IList<MethodInfo> GetExtensionMethodsForCurrentAssemblies(this Type extendedType)
+        /// <returns>   A <see cref="System.Collections.Generic.IEnumerable{MethodInfo}"/> with all the extension methods. </returns>
+        public static IEnumerable<MethodInfo> GetExtensionMethodsForCurrentAssemblies(this Type extendedType)
         {
-            if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
-
-            List<MethodInfo> methods = new List<MethodInfo>();
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsParallel())
-            {
-                lock (methods)
-                    methods.AddRange(GetExtensionMethods(assembly, extendedType));
-            }
-
-            return methods;
+            return GetExtensionMethods(AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).AsParallel(), extendedType, m => true);
         }
 
         /// <summary>   Gets the extension methods available in all currently loaded assemblies within the AppDomain that apply to a given type. </summary>
-        /// <remarks>   Collection is not cached.  ebrown, 11/9/2010. </remarks>
+        /// <remarks>   
+        /// IEnumerable is not cached.  Given Type is explored for all derived types and interfaces. Items are returned in alphabetical order
+        /// after the following order:
+        /// - Extensions that apply to the specified type
+        /// - Extensions that apply to interfaces implemented by the specified type
+        /// - Extensions apply to each derived type, in order of derivation. 
+        /// </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
         /// <param name="selector">     The filtering function used to inspect the methods when building the list. </param>
-        /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
-        public static IList<MethodInfo> GetExtensionMethodsForCurrentAssemblies(this Type extendedType, Func<MethodInfo, bool> selector)
+        /// <returns>   A <see cref="System.Collections.Generic.IEnumerable{MethodInfo}"/> with all the extension methods. </returns>
+        public static IEnumerable<MethodInfo> GetExtensionMethodsForCurrentAssemblies(this Type extendedType, Func<MethodInfo, bool> selector)
         {
             if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
             if (null == selector) { throw new ArgumentNullException("selector"); }
 
-            List<MethodInfo> methods = new List<MethodInfo>();
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().AsParallel())
-            {
-                lock (methods)
-                    methods.AddRange(GetExtensionMethods(assembly, extendedType, selector));
-            }
-
-            return methods;
+            return GetExtensionMethods(AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).AsParallel(), extendedType, selector);
         }
 
         /// <summary>   Gets the extension methods available in a given assembly that apply to a given type. </summary>
-        /// <remarks>   IEnumerable is not cached.  ebrown, 11/9/2010. </remarks>
+        /// <remarks>   
+        /// IEnumerable is not cached.  Given Type is explored for all derived types and interfaces. Items are returned in alphabetical order
+        /// after the following order:
+        /// - Extensions that apply to the specified type
+        /// - Extensions that apply to interfaces implemented by the specified type
+        /// - Extensions apply to each derived type, in order of derivation. 
+        /// </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="assembly">     The given assembly. </param>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
-        /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
+        /// <returns>   A <see cref="System.Collections.Generic.IEnumerable{MethodInfo}"/> with all the extension methods. </returns>
         public static IEnumerable<MethodInfo> GetExtensionMethods(this Assembly assembly, Type extendedType)
         {
-            if (null == assembly) { throw new ArgumentNullException("assembly"); }
-            if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
-
-            var query = from type in assembly.GetTypes().AsParallel()
-                        where type.IsSealed && !type.IsGenericType && !type.IsNested
-                        from method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                        where method.IsDefined(typeof(ExtensionAttribute), false)
-                        where method.GetParameters()[0].ParameterType == extendedType
-                        select method;
-            return query;
+            return GetExtensionMethods(assembly, extendedType, m => true);
         }
 
         /// <summary>   Gets the extension methods available in a given assembly that apply to a given type. </summary>
-        /// <remarks>   IEnumerable is not cached.  ebrown, 11/9/2010. </remarks>
+        /// <remarks>   
+        /// IEnumerable is not cached.  Given Type is explored for all derived types and interfaces. Items are returned in alphabetical order
+        /// after the following order:
+        /// - Extensions that apply to the specified type
+        /// - Extensions that apply to interfaces implemented by the specified type
+        /// - Extensions apply to each derived type, in order of derivation. 
+        /// </remarks>
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="assembly">     The given assembly. </param>
         /// <param name="extendedType"> The Type being extended with extension methods. </param>
         /// <param name="selector">     The filtering function used to inspect the methods when building the list. </param>
-        /// <returns>   A <see cref="System.Collections.Generic.List{MethodInfo}"/> with all the extension methods. </returns>
+        /// <returns>   A <see cref="System.Collections.Generic.IEnumerable{MethodInfo}"/> with all the extension methods. </returns>
         public static IEnumerable<MethodInfo> GetExtensionMethods(this Assembly assembly, Type extendedType, Func<MethodInfo, bool> selector)
         {
             if (null == assembly) { throw new ArgumentNullException("assembly"); }
             if (null == extendedType) { throw new ArgumentNullException("extendedType"); }
             if (null == selector) { throw new ArgumentNullException("selector"); }
 
-            var query = from type in assembly.GetTypes().AsParallel()
+            return GetExtensionMethods(assembly.GetTypes().AsParallel(), extendedType, selector);
+        }
+
+        private static IEnumerable<MethodInfo> GetExtensionMethods(ParallelQuery<Type> types, Type extendedType, Func<MethodInfo, bool> selector)
+        {
+            //TODO: this should be revised to include generics -- right now won't find something like IEnumerable<T>
+            var baseTypes = extendedType.GetAllBaseTypesAndInterfaces();
+            var query = from type in types
                         where type.IsSealed && !type.IsGenericType && !type.IsNested
-                        from method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                        where method.IsDefined(typeof(ExtensionAttribute), false)
-                        where method.GetParameters()[0].ParameterType == extendedType
+                        from method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)                                                
+                        where method.IsDefined(typeof(ExtensionAttribute), false)                        
+                        let parameterType = method.GetParameters()[0].ParameterType
+                        where baseTypes.ContainsKey(parameterType)
                         where selector.Invoke(method)
+                        orderby baseTypes[parameterType] ascending, method.Name ascending
                         select method;
             return query;
-        } 
+        }
     }
 }
