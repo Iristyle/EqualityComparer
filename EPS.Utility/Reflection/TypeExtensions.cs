@@ -79,12 +79,49 @@ namespace EPS.Reflection
         /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
         /// <param name="value">    The object to inspect. </param>
         /// <returns>   <c>true</c> if the specified object is based on an anonymous type; otherwise, <c>false</c>. </returns>
-        [SuppressMessage("Gendarme.Rules.Design.Linq", "AvoidExtensionMethodOnSystemObjectRule", Justification = "Someone cares about VB.Net?")]
-        public static bool IsAnonymous(this object value)
+        public static bool IsAnonymous<T>(this T value)
         {
             if (null == value) { throw new ArgumentNullException("value"); }
 
-            return IsAnonymous(value.GetType());
+            return IsAnonymous(typeof(T));
+        }
+
+
+        /// <summary>   A Type extension method that gets all base types and interfaces for a given type by recursing the type hierarchy. </summary>
+        /// <remarks>   
+        /// Given Type is explored for all derived types and interfaces. Types are returned in the following depth order:
+        /// - The type itself at depth 0
+        /// - Implemented interfaces at depth 1
+        /// - All based types, in order of derivation with an appropriate depth of 2+. 
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are null. </exception>
+        /// <param name="type"> The type. </param>
+        /// <returns>   all base types and interfaces in order of depth. </returns>
+        public static IDictionary<Type, int> GetAllBaseTypesAndInterfaces(this Type type)
+        {
+            if (null == type) { throw new ArgumentNullException("type"); }
+            
+            //start with interfaces at depth of 1
+            var types = type.GetInterfaces().ToDictionary(i => i, i => 1);
+            //original type at depth of 0
+            types.Add(type, 0);
+
+            //base types at depth of 2+ up the tree -- if we're object / have no BaseType
+            RecurseTypeHierarchy(type.BaseType, types, 2);
+
+            return types;
+        }
+
+        private static void RecurseTypeHierarchy(Type derivedType, IDictionary<Type, int> discoveredTypes, int depth)
+        {
+            if (null == derivedType) { return; }
+
+            if (derivedType.BaseType != null)
+            {
+                //plow all the way to the bottom -- largest depth further down
+                RecurseTypeHierarchy(derivedType.BaseType, discoveredTypes, depth + 1);
+            }
+            discoveredTypes.Add(derivedType, depth);
         }
     }
 }
