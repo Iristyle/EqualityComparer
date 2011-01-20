@@ -21,6 +21,11 @@ namespace EPS.Reflection.Tests.Unit
         {
             return true;
         }
+
+        public static bool IEnumerableTest2(this IEnumerable<int> enumerable)
+        {
+            return true;
+        }
     }
 
     public class ExtensionMethodSearcherTest
@@ -57,6 +62,23 @@ namespace EPS.Reflection.Tests.Unit
         }
 
         [Fact]
+        public void GetExtensionMethodsForCurrentAssemblies_FindsExtensionsOnGenericTypes()
+        {
+            //this should find at least the two extension methods defined above
+            var localExtensions = Assembly.GetExecutingAssembly().GetExtensionMethods(typeof(IEnumerable<>));
+            //TODO: currently only finds one, as the other is IEnumerable<int> and GetExtensionMethods has a bug
+            Assert.True(localExtensions.Count() >= 2);
+        }
+
+        [Fact]
+        public void GetExtensionMethodsForCurrentAssemblies_FindsExtensionsOnGenericTypesWithArgumentsSpecified()
+        {
+            //this should find at least the single extension method defined above
+            var localExtensions = Assembly.GetExecutingAssembly().GetExtensionMethods(typeof(IEnumerable<int>));
+            Assert.NotEmpty(localExtensions);
+        }
+
+        [Fact]
         public void GetExtensionMethodsForCurrentAssemblies_FindsInAllAssembliesOnBCLInterface()
         {
             var typeToFind = typeof(IEnumerable<>);
@@ -64,8 +86,8 @@ namespace EPS.Reflection.Tests.Unit
             var bclExtensions = Assembly.GetAssembly(typeof(System.Linq.Enumerable)).GetExtensionMethods(typeToFind).Count();
             var localExtensions = Assembly.GetExecutingAssembly().GetExtensionMethods(typeToFind).Count();
             var allExtensions =  typeToFind.GetExtensionMethodsForCurrentAssemblies().Count();
-            throw new NotImplementedException("It would appear that there's a bug digging out generic interfaces like IEnumerable<>");
-            //Assert.True(bclExtensions > 0 && localExtensions > 0 && (bclExtensions + localExtensions <= allExtensions));
+            //throw new NotImplementedException("It would appear that there's a bug digging out generic interfaces like IEnumerable<>");
+            Assert.True(bclExtensions > 0 && localExtensions > 0 && (bclExtensions + localExtensions <= allExtensions));
         }
 
         [Fact]

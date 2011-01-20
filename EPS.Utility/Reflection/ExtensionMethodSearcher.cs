@@ -102,15 +102,24 @@ namespace EPS.Reflection
 
         private static IEnumerable<MethodInfo> GetExtensionMethods(ParallelQuery<Type> types, Type extendedType, Func<MethodInfo, bool> selector)
         {
-            //TODO: this should be revised to include generics -- right now won't find something like IEnumerable<T>
+            //TODO: this works in very general cases with generics -- but won't properly handle generics with types specified
             var baseTypes = extendedType.GetAllBaseTypesAndInterfaces();
             var query = from type in types
                         where type.IsSealed && !type.IsGenericType && !type.IsNested
                         from method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)                                                
                         where method.IsDefined(typeof(ExtensionAttribute), false)                        
-                        let parameterType = method.GetParameters()[0].ParameterType
-                        where baseTypes.ContainsKey(parameterType)
+                        let rawParameterType = method.GetParameters()[0].ParameterType
+                        //if we're not a generic parameter type, use the types
+                        let parameterType = !rawParameterType.IsGenericType ? rawParameterType :
+                        //if we're asking for something like IEnumerable<> then we can use GetGenericTypeDefinition
+                            rawParameterType.ContainsGenericParameters ? rawParameterType.GetGenericTypeDefinition() :
+                        //otherwise, just use the IEnumerable<int> or what have you
+                            rawParameterType
+                        //TODO : what needs to happen is we have to check for type compatibility here -- we have have been passed a IEnumerable<int>
+                        //but our baseTypes includes IEnumerable<> -- these two are compatible -- we have to check rules of contravariance, etc
+                        where baseTypes.Any(pair => pair.Key == parameterType)
                         where selector.Invoke(method)
+                        //TODO: keep in mind if we're dealing with a compatbility situation as described above, this parameterType indexer will be wrong
                         orderby baseTypes[parameterType] ascending, method.Name ascending
                         select method;
             return query;
