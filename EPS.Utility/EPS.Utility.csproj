@@ -91,6 +91,7 @@
     <Compile Include="Linq\Expressions\ExpressionVisitorBase.cs" />
     <Compile Include="Linq\Extensions.cs" />
     <Compile Include="Net\CookieHelper.cs" />
+    <Compile Include="PropertyComparer.cs" />
     <Compile Include="Reflection\Emit\RuntimeTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\Emit\TypeBuilderExtensions.cs" />
