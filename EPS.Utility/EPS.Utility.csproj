@@ -120,6 +120,11 @@
   <ItemGroup>
     <Folder Include="Runtime\Caching\Configuration\" />
   </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\Build\CustomDictionary.xml">
+      <Link>Properties\CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
