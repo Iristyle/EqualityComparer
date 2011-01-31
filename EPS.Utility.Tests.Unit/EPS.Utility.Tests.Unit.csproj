@@ -21,7 +21,7 @@
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\Build\FxCopRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\Build\FxCopRules.Test.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -31,8 +31,19 @@
     <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\Build\FxCopRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\Build\FxCopRules.Test.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Analysis|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Build\FxCopRules.Test.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FakeItEasy">
@@ -131,4 +142,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <UsingTask AssemblyFile="..\..\..\tools\Gendarme-2.8.0.0\GendarmeMsBuild.dll" TaskName="GendarmeMsBuild.Gendarme"/>
+  <Target Name="AfterBuild">
+	<Gendarme Condition="$(RunCodeAnalysis)" Assemblies="$(TargetPath)" IntegrateWithVisualStudio="True"
+		GendarmeExeFilename="..\..\..\tools\Gendarme-2.8.0.0\gendarme.exe" 
+		GendarmeConfigFilename="..\Build\gendarme-rules.xml" Ruleset="EPS.Test" />
+  </Target>
 </Project>
