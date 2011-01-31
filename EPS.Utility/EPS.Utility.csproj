@@ -57,6 +57,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Runtime.Serialization" />
@@ -102,6 +103,9 @@
     <Compile Include="Security\Cryptography\HashHelpers.cs" />
     <Compile Include="Security\LogHelpers.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="Testing\CompareObjects.cs" />
+    <Compile Include="Testing\ComparisonHelper.cs" />
+    <Compile Include="Testing\ComparisonResult.cs" />
     <Compile Include="Text\EnumDescriptionAttribute.cs" />
     <Compile Include="Text\EnumDescriptionAttributeExtensions.cs" />
     <Compile Include="Text\EnumValueAttribute.cs" />
@@ -133,10 +137,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <UsingTask AssemblyFile="..\..\..\tools\Gendarme-2.8.0.0\GendarmeMsBuild.dll" TaskName="GendarmeMsBuild.Gendarme"/>
+  <UsingTask AssemblyFile="..\..\..\tools\Gendarme-2.8.0.0\GendarmeMsBuild.dll" TaskName="GendarmeMsBuild.Gendarme" />
   <Target Name="AfterBuild">
-	<Gendarme Condition="$(RunCodeAnalysis)" Assemblies="$(TargetPath)" IntegrateWithVisualStudio="True"
-		GendarmeExeFilename="..\..\..\tools\Gendarme-2.8.0.0\gendarme.exe" 
-		GendarmeConfigFilename="..\Build\gendarme-rules.xml" Ruleset="EPS" />
+    <Gendarme Condition="$(RunCodeAnalysis)" Assemblies="$(TargetPath)" IntegrateWithVisualStudio="True" GendarmeExeFilename="..\..\..\tools\Gendarme-2.8.0.0\gendarme.exe" GendarmeConfigFilename="..\Build\gendarme-rules.xml" Ruleset="EPS" />
   </Target>
 </Project>
