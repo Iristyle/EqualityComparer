@@ -79,7 +79,7 @@ namespace EPS.Reflection.Tests.Unit
         }
 
         [Fact]
-        public void GetExtensionMethodsForCurrentAssemblies_FindsInAllAssembliesOnBCLInterface()
+        public void GetExtensionMethodsForCurrentAssemblies_FindsInAllAssembliesOnBclInterface()
         {
             var typeToFind = typeof(IEnumerable<>);
             //we have to filter for extensions on only FakeType, since the default examines the type hierarchy -- and we have some generic extensions
