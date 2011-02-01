@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using EPS.Reflection;
 using Xunit;
 
 namespace EPS.Reflection.Tests.Unit
@@ -126,6 +125,7 @@ namespace EPS.Reflection.Tests.Unit
 
         class D : IMarker, IDisposable
         {
+            protected virtual void Dispose (bool disposing) { }
             public void Dispose() { }
         }
 
