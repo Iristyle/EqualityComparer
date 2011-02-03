@@ -6,45 +6,99 @@ using System.Reflection;
 
 namespace EPS.Reflection
 {
-    //this is a *very* rudimentary comparison routine
+    /// <summary>   A rudimentary comparison routine that Member information comparer. </summary>
+    /// <remarks>   ebrown, 2/3/2011. </remarks>
     public class MemberInfoComparer : EqualityComparer<MemberInfo>
     {
-        public override bool Equals(MemberInfo x, MemberInfo y)
+        private static Lazy<MemberInfoComparer> _default = new Lazy<MemberInfoComparer>(() => new MemberInfoComparer());
+        private static Lazy<MemberInfoComparer> _ignoreCustom = new Lazy<MemberInfoComparer>(() => new MemberInfoComparer(MemberTypes.Custom, MemberTypes.NestedType, MemberTypes.TypeInfo));
+
+        /// <summary>   Gets the default MemberInfoComparer instance, rather than continually constructing new instances. </summary>
+        /// <value> The default. </value>
+        public static new MemberInfoComparer Default { get { return _default.Value; } }
+
+        /// <summary>   
+        /// Gets the MemberInfoComparer instance that will ignore MemberTypes.Custom, MemberTypes.NestedType and MemberTypes.TypeInfo, rather
+        /// than continually constructing new instances. 
+        /// </summary>
+        /// <value> A MemberInfoComparer following the specified rules. </value>
+        public static MemberInfoComparer IgnoreNestedTypes { get { return _ignoreCustom.Value; } }
+
+        private MemberTypes[] ignores;
+
+        /// <summary>
+        /// Initializes a new instance of the MemberInfoComparer class.
+        /// </summary>
+        public MemberInfoComparer()
+        { }
+
+        /// <summary>   Initializes a new instance of the MemberInfoComparer class. </summary>
+        /// <remarks>   ebrown, 2/3/2011. </remarks>
+        /// <param name="ignores">  A variable-length parameters list containing MemberTypes to ignores. </param>
+        public MemberInfoComparer(params MemberTypes[] ignores)
         {
-            if (x.Name != y.Name || x.MemberType != y.MemberType)
-                return false;
+            if (null == ignores) { throw new ArgumentNullException("ignores"); }
 
-            if (x.MemberType == MemberTypes.Method)
+            this.ignores = ignores;
+            if (null != ignores)
             {
-                MethodInfo xMethod = (MethodInfo)x;
-                MethodInfo yMethod = (MethodInfo)y;
-
-                Type xReturnType = xMethod.ReturnType, yReturnType = yMethod.ReturnType;
-
-                //comparing ReturnType doesn't work on generic methods -- so we have to do things a little different
-                if (xMethod.IsGenericMethod && yMethod.IsGenericMethod)
+                if (ignores.Contains(MemberTypes.All))
                 {
-                    if (xReturnType.IsGenericType && yReturnType.IsGenericType)
-                        return (xReturnType.GetGenericTypeDefinition() == yReturnType.GetGenericTypeDefinition())
-                            && xMethod.GetParameters().SequenceEqual(yMethod.GetParameters(), new ParameterInfoComparer());
-
-                    //match type names   
-                    if (xReturnType.IsGenericParameter && yReturnType.IsGenericParameter)
-                        return (xReturnType.Name == yReturnType.Name 
-                        && ((!xMethod.GetParameters().Any() && !yMethod.GetParameters().Any())
-                        || xMethod.GetParameters().SequenceEqual(yMethod.GetParameters(), new ParameterInfoComparer())));
+                    throw new ArgumentException("MemberTypes.All makes no sense within this context", "ignores");
                 }
-
-                //return types match and there are 0 params or param list sequences match
-                return (xReturnType == yReturnType
-                    && ((!xMethod.GetParameters().Any() && !yMethod.GetParameters().Any())
-                    || xMethod.GetParameters().SequenceEqual(yMethod.GetParameters(), new ParameterInfoComparer())));
-                    
             }
-
-            return true;
         }
 
+        /// <summary>   Tests if two MemberInfo objects are considered equal. </summary>
+        /// <remarks>   ebrown, 2/3/2011. </remarks>
+        /// <param name="x">    MemberInfo instance to be compared. </param>
+        /// <param name="y">    MemberInfo instance to be compared. </param>
+        /// <returns>   true if the objects are considered equal, false if they are not. </returns>
+        public override bool Equals(MemberInfo x, MemberInfo y)
+        {
+            if (x == y) { return true; }
+            if ((x == null) || (y == null)) { return false; }
+            if (x.MemberType != y.MemberType) { return false; }
+
+            //check against our ignore list -- return true if we're ignoring these types
+            if (null != this.ignores && this.ignores.Contains(x.MemberType)) { return true; }
+
+            if (x.Name != y.Name) { return false; }
+
+            switch (x.MemberType)
+            {
+                case MemberTypes.Constructor:
+                    return ConstructorInfoComparer.Default.Equals((ConstructorInfo)x, (ConstructorInfo)y);
+                case MemberTypes.Event:
+                    return EventInfoComparer.Default.Equals((EventInfo)x, (EventInfo)y);
+                case MemberTypes.Field:
+                    return FieldInfoComparer.Default.Equals((FieldInfo)x, (FieldInfo)y);
+                case MemberTypes.Method:
+                    return MethodInfoComparer.Default.Equals((MethodInfo)x, (MethodInfo)y);
+                case MemberTypes.Property:
+                    return PropertyInfoComparer.Default.Equals((PropertyInfo)x, (PropertyInfo)y);
+
+                //compare the NestedTypes for compatibility based on their Members (effectively making this a recursive call)
+                case MemberTypes.NestedType:
+                    var xMembers = ((Type)x).GetMembers();
+                    var yMembers = ((Type)y).GetMembers();
+
+                    //empty list of members
+                    return ((!xMembers.Any() && !yMembers.Any())
+                        //or the same list of members (using the same criteria that we're currently using)
+                        || (!xMembers.Except(yMembers, this).Any() && !yMembers.Except(xMembers, this).Any()));
+
+                default:
+                case MemberTypes.Custom:
+                case MemberTypes.TypeInfo:
+                    return false;
+            }
+        }
+
+        /// <summary>   Calculates the hash code for this object. </summary>
+        /// <remarks>   ebrown, 2/3/2011. </remarks>
+        /// <param name="obj">  The object. </param>
+        /// <returns>   The hash code for this object. </returns>
         public override int GetHashCode(MemberInfo obj)
         {
             return string.Format(CultureInfo.CurrentCulture, "{0}{1}", obj.MemberType, obj.Name).GetHashCode();

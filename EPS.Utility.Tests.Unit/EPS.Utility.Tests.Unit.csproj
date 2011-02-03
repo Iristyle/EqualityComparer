@@ -79,7 +79,6 @@
       <Link>Properties\SharedAssemblyVersioning.cs</Link>
     </Compile>
     <Compile Include="Collections\NaturalSortComparerTest.cs" />
-    <Compile Include="Comparers.cs" />
     <Compile Include="Configuration\Abstractions\IConfigurationSectionGroupTest.cs" />
     <Compile Include="Configuration\Abstractions\ConfigurationManagerWrapperTest.cs" />
     <Compile Include="Configuration\Abstractions\ConnectionStringSettingsWrapperTest.cs" />
@@ -101,10 +100,16 @@
     <Compile Include="Linq\LinqExtensionsTest.cs" />
     <Compile Include="Net\CookieHelperTest.cs" />
     <Compile Include="PropertyComparerTest.cs" />
+    <Compile Include="Reflection\ConstructorInfoComparerTest.cs" />
     <Compile Include="Reflection\Emit\RuntimeTypeBuilderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\Emit\TypeBuilderExtensionsTest.cs" />
+    <Compile Include="Reflection\EventInfoComparerTest.cs" />
     <Compile Include="Reflection\ExtensionMethodSearcherTest.cs" />
+    <Compile Include="Reflection\FieldInfoComparerTest.cs" />
+    <Compile Include="Reflection\MemberInfoComparerTest.cs" />
+    <Compile Include="Reflection\MethodInfoComparerTest.cs" />
+    <Compile Include="Reflection\ParameterInfoComparerTest.cs" />
     <Compile Include="Reflection\TypeExtensionsTest.cs" />
     <Compile Include="Runtime\Serialization\Json\JsonExtensionsTest.cs" />
     <Compile Include="Runtime\Serialization\Json\ObjectExtensionsTest.cs" />
@@ -117,8 +122,8 @@
     <Compile Include="Text\PatternsTest.cs" />
     <Compile Include="Text\SubstringMatchedStringTest.cs" />
     <Compile Include="Text\SubstringMatchListStringComparerTest.cs" />
-    <Compile Include="Text\WordBreakRegexComparerTest.cs" />
-    <Compile Include="Text\WordBreakStringComparerTest.cs" />
+    <Compile Include="Text\WordbreakRegexComparerTest.cs" />
+    <Compile Include="Text\WordbreakStringComparerTest.cs" />
     <Compile Include="Threading\ThreadPoolTest.cs" />
     <Compile Include="Windows\Security\WindowsIdentityExtensionsTest.cs" />
     <Compile Include="Windows\Security\WindowsPrincipalExtensionsTest.cs" />
@@ -142,10 +147,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <UsingTask AssemblyFile="..\..\..\tools\Gendarme-2.8.0.0\GendarmeMsBuild.dll" TaskName="GendarmeMsBuild.Gendarme"/>
+  <UsingTask AssemblyFile="..\..\..\tools\Gendarme-2.8.0.0\GendarmeMsBuild.dll" TaskName="GendarmeMsBuild.Gendarme" />
   <Target Name="AfterBuild">
-	<Gendarme Condition="$(RunCodeAnalysis)" Assemblies="$(TargetPath)" IntegrateWithVisualStudio="True"
-		GendarmeExeFilename="..\..\..\tools\Gendarme-2.8.0.0\gendarme.exe" 
-		GendarmeConfigFilename="..\Build\gendarme-rules.xml" Ruleset="EPS.Test" />
+    <Gendarme Condition="$(RunCodeAnalysis)" Assemblies="$(TargetPath)" IntegrateWithVisualStudio="True" GendarmeExeFilename="..\..\..\tools\Gendarme-2.8.0.0\gendarme.exe" GendarmeConfigFilename="..\Build\gendarme-rules.xml" Ruleset="EPS.Test" />
   </Target>
 </Project>
