@@ -19,12 +19,12 @@ namespace EPS.Reflection.Tests.Unit
 
         public static bool IEnumerableTest<T>(this IEnumerable<T> enumerable)
         {
-            return true;
+            return (enumerable != null);
         }
 
         public static bool IEnumerableTest2(this IEnumerable<int> enumerable)
         {
-            return true;
+            return (enumerable != null);
         }
     }
 
