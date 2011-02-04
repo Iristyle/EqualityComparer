@@ -24,7 +24,7 @@ namespace EPS.Reflection
         /// <value> A MemberInfoComparer following the specified rules. </value>
         public static MemberInfoComparer IgnoreNestedTypes { get { return _ignoreCustom.Value; } }
 
-        private MemberTypes[] ignores;
+        private MemberTypes[] _memberTypeIgnores;
 
         /// <summary>
         /// Initializes a new instance of the MemberInfoComparer class.
@@ -39,7 +39,7 @@ namespace EPS.Reflection
         {
             if (null == ignores) { throw new ArgumentNullException("ignores"); }
 
-            this.ignores = ignores;
+            this._memberTypeIgnores = ignores;
             if (null != ignores)
             {
                 if (ignores.Contains(MemberTypes.All))
@@ -58,14 +58,16 @@ namespace EPS.Reflection
         {
             if (x == y) { return true; }
             if ((x == null) || (y == null)) { return false; }
-            if (x.MemberType != y.MemberType) { return false; }
+            MemberTypes xMemberType = x.MemberType,
+                yMemberType = y.MemberType;
+            if (xMemberType != yMemberType) { return false; }
 
             //check against our ignore list -- return true if we're ignoring these types
-            if (null != this.ignores && this.ignores.Contains(x.MemberType)) { return true; }
+            if (null != this._memberTypeIgnores && this._memberTypeIgnores.Contains(xMemberType)) { return true; }
 
             if (x.Name != y.Name) { return false; }
 
-            switch (x.MemberType)
+            switch (xMemberType)
             {
                 case MemberTypes.Constructor:
                     return ConstructorInfoComparer.Default.Equals((ConstructorInfo)x, (ConstructorInfo)y);
