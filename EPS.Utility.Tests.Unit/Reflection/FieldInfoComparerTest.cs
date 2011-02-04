@@ -1,4 +1,4 @@
-using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xunit;
 
@@ -8,11 +8,13 @@ namespace EPS.Reflection.Tests.Unit
     {
         class TypeA
         {
+            [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "Test Code")]
             public int Test = 0;
         }
 
         class TypeB
         {
+            [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "Test Code")]
             public int Test = 0;
         }
 

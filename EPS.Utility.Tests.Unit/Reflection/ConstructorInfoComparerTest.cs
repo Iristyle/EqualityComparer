@@ -1,4 +1,4 @@
-using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xunit;
 
@@ -8,11 +8,13 @@ namespace EPS.Reflection.Tests.Unit
     {
         class TypeA
         {
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Test Code")]
             public TypeA(int test) { }
         }
 
         class TypeB
         {
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Test Code")]
             public TypeB(int test) { }
         }
 

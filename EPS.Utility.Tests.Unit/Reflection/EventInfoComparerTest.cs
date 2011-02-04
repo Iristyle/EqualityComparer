@@ -11,12 +11,20 @@ namespace EPS.Reflection.Tests.Unit
         {
             public event EventHandler Test;
             public event EventHandler<UnhandledExceptionEventArgs> Test2;
+
+            //placeholders to remove compiler warnings
+            private void CallTest() { var TestCopy = Test;  if (null != TestCopy) { TestCopy(this, EventArgs.Empty); } }
+            private void CallTest2() { var TestCopy2 = Test2; if (null != TestCopy2) { TestCopy2(this, new UnhandledExceptionEventArgs(new DivideByZeroException(), false)); } }
         }
 
         class B
         {
             public event EventHandler Test;
             public event EventHandler<UnhandledExceptionEventArgs> Test2;
+
+            //placeholders to remove compiler warnings
+            private void CallTest() { var TestCopy = Test; if (null != TestCopy) { TestCopy(this, EventArgs.Empty); } }
+            private void CallTest2() { var TestCopy2 = Test2; if (null != TestCopy2) { TestCopy2(this, new UnhandledExceptionEventArgs(new DivideByZeroException(), false)); } }
         }
 
         [Fact]

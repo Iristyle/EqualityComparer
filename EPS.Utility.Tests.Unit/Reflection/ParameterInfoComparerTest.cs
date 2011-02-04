@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xunit;
 
@@ -8,12 +9,19 @@ namespace EPS.Reflection.Tests.Unit
     {
         class A
         {
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Test Code")]
             public void Test(int input, string input2) { }
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Test Code")]
             public void TestCopy(int input, string input2) { }
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Test Code")]
             public void TestOverload(string input, string input2) { }
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Test Code")]
             public void TestRearranged(string input, int input2) { }
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Test Code")]
             public void TestWithOptional(int input, string input2 = "optional") { }
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Test Code")]
             public void TestWithRef(int input, ref string input2) { }
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Test Code")]
             public void TestWithOut(int input, out string input2) { input2 = "out"; }
         }
 
