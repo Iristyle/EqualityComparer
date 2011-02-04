@@ -66,6 +66,7 @@ namespace EPS.Reflection
         /// <returns>   The hash code for this object. </returns>
         public override int GetHashCode(ConstructorInfo obj)
         {
+            if (null == obj) { return 0; }
             return string.Format(CultureInfo.CurrentCulture, "{0}{1}", obj.MemberType, obj.Name).GetHashCode();
         }
     }

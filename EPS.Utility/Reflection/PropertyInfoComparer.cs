@@ -40,6 +40,7 @@ namespace EPS.Reflection
         /// <returns>   The hash code for this object. </returns>
         public override int GetHashCode(PropertyInfo obj)
         {
+            if (null == obj) { return 0; }
             return string.Format(CultureInfo.CurrentCulture, "Member:{0}Name:{1}PropertyType:{2}", obj.MemberType, obj.Name, obj.PropertyType).GetHashCode();
         }
     }

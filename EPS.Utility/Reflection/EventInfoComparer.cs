@@ -37,6 +37,7 @@ namespace EPS.Reflection
         /// <returns>   The hash code for this object. </returns>
         public override int GetHashCode(EventInfo obj)
         {
+            if (null == obj) { return 0; }
             return string.Format(CultureInfo.CurrentCulture, "Member:{0}Name:{1}EventHandlerType:{2}", obj.MemberType, obj.Name, obj.EventHandlerType).GetHashCode();
         }
     }

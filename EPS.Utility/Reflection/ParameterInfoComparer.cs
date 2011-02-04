@@ -44,6 +44,7 @@ namespace EPS.Reflection
         /// <returns>   The hash code for this object. </returns>
         public override int GetHashCode(ParameterInfo obj)
         {
+            if (null == obj) { return 0; }
             return (String.Format(CultureInfo.CurrentCulture, "{0}{1}{2}{3}", obj.Name, obj.DefaultValue, obj.ParameterType, obj.Position)).GetHashCode();
         }
     }
