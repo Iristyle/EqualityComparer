@@ -93,11 +93,14 @@
     <Compile Include="Diagnostics\LogHelperTest.cs" />
     <Compile Include="Dynamic\ObjectExtensionsTest.cs" />
     <Compile Include="EnumExtensionsTest.cs" />
+    <Compile Include="EventHandlerExtensionsTest.cs" />
     <Compile Include="IO\StreamExtensionsTest.cs" />
+    <Compile Include="GenericEqualityComparerTest.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensionsTest.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitorBaseTest.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitorTest.cs" />
     <Compile Include="Linq\LinqExtensionsTest.cs" />
+    <Compile Include="Linq\QueryableExtensionsTest.cs" />
     <Compile Include="Net\CookieHelperTest.cs" />
     <Compile Include="PropertyComparerTest.cs" />
     <Compile Include="Reflection\ConstructorInfoComparerTest.cs" />

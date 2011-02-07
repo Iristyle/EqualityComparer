@@ -86,11 +86,14 @@
     <Compile Include="Diagnostics\LogHelper.cs" />
     <Compile Include="Dynamic\ObjectExtensions.cs" />
     <Compile Include="EnumExtensions.cs" />
+    <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="IO\StreamExtensions.cs" />
+    <Compile Include="GenericEqualityComparer.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitor.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitorBase.cs" />
     <Compile Include="Linq\Extensions.cs" />
+    <Compile Include="Linq\QueryableExtensions.cs" />
     <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="PropertyComparer.cs" />
     <Compile Include="Reflection\ConstructorInfoComparer.cs" />
