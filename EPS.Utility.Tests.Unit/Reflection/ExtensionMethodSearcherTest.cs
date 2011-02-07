@@ -86,7 +86,6 @@ namespace EPS.Reflection.Tests.Unit
             var bclExtensions = Assembly.GetAssembly(typeof(System.Linq.Enumerable)).GetExtensionMethods(typeToFind).Count();
             var localExtensions = Assembly.GetExecutingAssembly().GetExtensionMethods(typeToFind).Count();
             var allExtensions =  typeToFind.GetExtensionMethodsForCurrentAssemblies().Count();
-            //throw new NotImplementedException("It would appear that there's a bug digging out generic interfaces like IEnumerable<>");
             Assert.True(bclExtensions > 0 && localExtensions > 0 && (bclExtensions + localExtensions <= allExtensions));
         }
 
