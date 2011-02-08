@@ -87,6 +87,7 @@
     <Compile Include="Dynamic\ObjectExtensions.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="EventHandlerExtensions.cs" />
+    <Compile Include="IListExtensions.cs" />
     <Compile Include="IO\StreamExtensions.cs" />
     <Compile Include="GenericEqualityComparer.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
