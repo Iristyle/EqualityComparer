@@ -94,6 +94,7 @@
     <Compile Include="Dynamic\ObjectExtensionsTest.cs" />
     <Compile Include="EnumExtensionsTest.cs" />
     <Compile Include="EventHandlerExtensionsTest.cs" />
+    <Compile Include="IListExtensionTest.cs" />
     <Compile Include="IO\StreamExtensionsTest.cs" />
     <Compile Include="GenericEqualityComparerTest.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensionsTest.cs" />
