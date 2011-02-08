@@ -69,6 +69,9 @@
     <Compile Include="..\Build\SharedAssemblyVersioning.cs">
       <Link>Properties\SharedAssemblyVersioning.cs</Link>
     </Compile>
+    <Compile Include="Collections\EnumeratorExtensions.cs" />
+    <Compile Include="Collections\Generic\EnumeratorExtensions.cs" />
+    <Compile Include="Collections\Generic\EnumeratorWrapper.cs" />
     <Compile Include="Collections\NaturalSortComparer.cs" />
     <Compile Include="Configuration\Abstractions\ConfigurationManagerWrapper.cs" />
     <Compile Include="Configuration\Abstractions\ConnectionStringSettingsWrapper.cs" />

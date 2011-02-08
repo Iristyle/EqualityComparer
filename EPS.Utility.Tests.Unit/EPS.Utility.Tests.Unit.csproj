@@ -78,6 +78,9 @@
     <Compile Include="..\Build\SharedAssemblyVersioning.cs">
       <Link>Properties\SharedAssemblyVersioning.cs</Link>
     </Compile>
+    <Compile Include="Collections\EnumeratorExtensionsTest.cs" />
+    <Compile Include="Collections\Generic\EnumeratorExtensionsTest.cs" />
+    <Compile Include="Collections\Generic\EnumeratorWrapperTest.cs" />
     <Compile Include="Collections\NaturalSortComparerTest.cs" />
     <Compile Include="Configuration\Abstractions\IConfigurationSectionGroupTest.cs" />
     <Compile Include="Configuration\Abstractions\ConfigurationManagerWrapperTest.cs" />
