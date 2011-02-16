@@ -8,6 +8,12 @@ namespace EPS.Utility.Tests.Unit
     {
         class A
         {
+            public A(int integer, string @string)
+            {
+                Integer = integer;
+                String = @string;
+            }
+
             public int Integer { get; set; }
             public string String { get; set; }
 
@@ -32,21 +38,24 @@ namespace EPS.Utility.Tests.Unit
         [Fact]
         public void Compare_TrueOnMatchingObjectsWithSpecifiedPropertiesOnly()
         {
-            A a = new A() { Integer = 1, String = "foo" }, b = new A() { Integer = 1, String = "bar" };
-            Assert.Equal(a, a, A.IntegerOnlyComparer);
+            A a = new A(1, "foo"),
+                b = new A(1, "bar");
+            Assert.Equal(a, b, A.IntegerOnlyComparer);
         }
 
         [Fact]
         public void Compare_TrueOnMatchingObjectsWithMultipleProperties()
         {
-            A a = new A() { Integer = 1, String = "string" }, b = new A() { Integer = 1, String = "string" };
-            Assert.Equal(a, a, A.AllPropertiesComparer);
+            A a = new A(1, "string"), 
+                b = new A(a.Integer, a.String);
+            Assert.Equal(a, b, A.AllPropertiesComparer);
         }
 
         [Fact]
         public void Compare_FalseOnMismatchedObjects()
         {
-            A a = new A() { Integer = 1 }, b = new A() { Integer = 2 };
+            A a = new A(1, string.Empty), 
+                b = new A(2, string.Empty);
             Assert.NotEqual(a, b, A.IntegerOnlyComparer);
         }
     }
