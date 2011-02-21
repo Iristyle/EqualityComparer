@@ -71,14 +71,15 @@
     </Compile>
     <Compile Include="Collections\EnumeratorExtensions.cs" />
     <Compile Include="Collections\Generic\EnumeratorExtensions.cs" />
-    <Compile Include="Collections\Generic\EnumeratorWrapper.cs" />
+    <Compile Include="Collections\Generic\EnumeratorConverter.cs" />
+    <Compile Include="Collections\Generic\ListExtensions.cs" />
     <Compile Include="Collections\NaturalSortComparer.cs" />
     <Compile Include="Configuration\Abstractions\ConfigurationManagerWrapper.cs" />
     <Compile Include="Configuration\Abstractions\ConnectionStringSettingsWrapper.cs" />
     <Compile Include="Configuration\Abstractions\IConfigurationManager.cs" />
     <Compile Include="Configuration\Abstractions\IConfigurationSectionGroup.cs" />
     <Compile Include="Configuration\Abstractions\IConnectionStringSettings.cs" />
-    <Compile Include="Configuration\ConfigurationElementCollection.cs" />
+    <Compile Include="Configuration\ConfigurationElementDictionary.cs" />
     <Compile Include="Configuration\EnumConverter.cs" />
     <Compile Include="Conversions\FileSizeFormatter.cs" />
     <Compile Include="Conversions\SafeConvert.cs" />
@@ -90,7 +91,6 @@
     <Compile Include="Dynamic\ObjectExtensions.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="EventHandlerExtensions.cs" />
-    <Compile Include="IListExtensions.cs" />
     <Compile Include="IO\StreamExtensions.cs" />
     <Compile Include="GenericEqualityComparer.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
