@@ -80,14 +80,15 @@
     </Compile>
     <Compile Include="Collections\EnumeratorExtensionsTest.cs" />
     <Compile Include="Collections\Generic\EnumeratorExtensionsTest.cs" />
-    <Compile Include="Collections\Generic\EnumeratorWrapperTest.cs" />
+    <Compile Include="Collections\Generic\EnumeratorConverterTest.cs" />
+    <Compile Include="Collections\Generic\ListExtensionTest.cs" />
     <Compile Include="Collections\NaturalSortComparerTest.cs" />
     <Compile Include="Configuration\Abstractions\IConfigurationSectionGroupTest.cs" />
     <Compile Include="Configuration\Abstractions\ConfigurationManagerWrapperTest.cs" />
     <Compile Include="Configuration\Abstractions\ConnectionStringSettingsWrapperTest.cs" />
     <Compile Include="Configuration\Abstractions\IConfigurationManagerTest.cs" />
     <Compile Include="Configuration\Abstractions\IConnectionStringSettingsTest.cs" />
-    <Compile Include="Configuration\ConfigurationElementCollectionTest.cs" />
+    <Compile Include="Configuration\ConfigurationElementDictionaryTest.cs" />
     <Compile Include="Configuration\EnumConverterTest.cs" />
     <Compile Include="Conversions\FileSizeFormatterTest.cs" />
     <Compile Include="Conversions\StringConversionsTest.cs" />
@@ -97,7 +98,6 @@
     <Compile Include="Dynamic\ObjectExtensionsTest.cs" />
     <Compile Include="EnumExtensionsTest.cs" />
     <Compile Include="EventHandlerExtensionsTest.cs" />
-    <Compile Include="IListExtensionTest.cs" />
     <Compile Include="IO\StreamExtensionsTest.cs" />
     <Compile Include="GenericEqualityComparerTest.cs" />
     <Compile Include="Linq\Expressions\ExpressionExtensionsTest.cs" />
