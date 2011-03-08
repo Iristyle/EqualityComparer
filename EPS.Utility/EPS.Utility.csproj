@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\Build\Shared.targets" />
   <PropertyGroup>
     <ProjectGuid>{10D51FFF-4F91-4917-82EA-B7426B2652F6}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -9,7 +10,6 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
-  <Import Project="..\Build\Shared.targets" />
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -104,4 +104,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Import Project="..\Build\Shared.tasks" />
 </Project>
