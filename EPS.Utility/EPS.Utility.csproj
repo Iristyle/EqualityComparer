@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\Build\Shared.targets" />
   <PropertyGroup>
     <ProjectGuid>{10D51FFF-4F91-4917-82EA-B7426B2652F6}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -96,7 +95,9 @@
   <ItemGroup>
     <Folder Include="Runtime\Caching\Configuration\" />
   </ItemGroup>
+  <Import Project="..\Build\Shared.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\Build\Shared.tasks" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -104,5 +105,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\Build\Shared.tasks" />
 </Project>
