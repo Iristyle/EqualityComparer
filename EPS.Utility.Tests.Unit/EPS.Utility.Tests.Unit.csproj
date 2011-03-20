@@ -9,10 +9,6 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.10.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\log4net-1.2.10.1 .NET 4 Client Profile\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -37,7 +33,6 @@
     <Compile Include="Configuration\EnumConverterTest.cs" />
     <Compile Include="Conversions\FileSizeFormatterTest.cs" />
     <Compile Include="Conversions\StringConversionsTest.cs" />
-    <Compile Include="Diagnostics\Log4NetWriterTest.cs" />
     <Compile Include="Diagnostics\DebugTextWriterTest.cs" />
     <Compile Include="Diagnostics\LogHelperTest.cs" />
     <Compile Include="Dynamic\ObjectExtensionsTest.cs" />

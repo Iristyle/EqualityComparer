@@ -10,10 +10,6 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.10.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\log4net-1.2.10.1 .NET 4 Client Profile\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -43,7 +39,6 @@
     <Compile Include="Conversions\StringConversions.cs" />
     <Compile Include="Diagnostics\DebugTextWriter.cs" />
     <Compile Include="Diagnostics\LogMethodAttribute.cs" />
-    <Compile Include="Diagnostics\Log4NetWriter.cs" />
     <Compile Include="Diagnostics\LogHelper.cs" />
     <Compile Include="Dynamic\ObjectExtensions.cs" />
     <Compile Include="EnumExtensions.cs" />
