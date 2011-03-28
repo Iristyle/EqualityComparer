@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\EnumeratorExtensionsTest.cs" />
+    <Compile Include="Collections\Generic\DictionaryExtensionsTest.cs" />
     <Compile Include="Collections\Generic\EnumeratorExtensionsTest.cs" />
     <Compile Include="Collections\Generic\EnumeratorConverterTest.cs" />
     <Compile Include="Collections\Generic\ListExtensionTest.cs" />

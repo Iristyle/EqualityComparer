@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\EnumeratorExtensions.cs" />
+    <Compile Include="Collections\Generic\DictionaryExtensions.cs" />
     <Compile Include="Collections\Generic\EnumeratorExtensions.cs" />
     <Compile Include="Collections\Generic\EnumeratorConverter.cs" />
     <Compile Include="Collections\Generic\ListExtensions.cs" />
