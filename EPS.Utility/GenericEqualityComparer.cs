@@ -52,5 +52,10 @@ namespace EPS.Utility
         {
             return this._hasher(obj);
         }
+
+		public static GenericEqualityComparer<T> ByAllProperties()
+		{
+			return new GenericEqualityComparer<T>((x, y) => PropertyComparer.Equal(x, y));
+		}
     }
 }
