@@ -73,10 +73,6 @@
     <Compile Include="Testing\CompareObjects.cs" />
     <Compile Include="Testing\ComparisonHelper.cs" />
     <Compile Include="Testing\ComparisonResult.cs" />
-    <Compile Include="Text\EnumDescriptionAttribute.cs" />
-    <Compile Include="Text\EnumDescriptionAttributeExtensions.cs" />
-    <Compile Include="Text\EnumValueAttribute.cs" />
-    <Compile Include="Text\EnumValueAttributeExtensions.cs" />
     <Compile Include="Text\GuidHelper.cs" />
     <Compile Include="Text\Patterns.cs" />
     <Compile Include="Text\SubstringMatchedString.cs" />
@@ -90,6 +86,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Runtime\Caching\Configuration\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EPS.Annotations\EPS.Annotations.csproj">
+      <Project>{ACAF7C74-B396-4768-A3B4-F4479C884FFC}</Project>
+      <Name>EPS.Annotations</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\Build\Shared.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
