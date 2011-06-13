@@ -47,7 +47,7 @@
     <Compile Include="Linq\LinqExtensionsTest.cs" />
     <Compile Include="Linq\QueryableExtensionsTest.cs" />
     <Compile Include="Net\CookieHelperTest.cs" />
-    <Compile Include="PropertyComparerTest.cs" />
+    <Compile Include="MemberComparerTest.cs" />
     <Compile Include="Reflection\ConstructorInfoComparerTest.cs" />
     <Compile Include="Reflection\Emit\RuntimeTypeBuilderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

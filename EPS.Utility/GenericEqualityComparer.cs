@@ -53,12 +53,14 @@ namespace EPS.Utility
 			return this._hasher(obj);
 		}
 
-		/// <summary>	Shortcut method to get a simple generic IEqualityComparer{T} where the comparison is by all properties on the instance. </summary>
+		/// <summary>	
+		/// Shortcut method to get a simple generic IEqualityComparer{T} where the comparison is by all properties and fields on the instance. 
+		/// </summary>
 		/// <remarks>	ebrown, 6/6/2011. </remarks>
 		/// <returns>	A GenericEqualityComparer{T}. </returns>
-		public static GenericEqualityComparer<T> ByAllProperties()
+		public static GenericEqualityComparer<T> ByAllMembers()
 		{
-			return new GenericEqualityComparer<T>((x, y) => PropertyComparer.Equal(x, y));
+			return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y));
 		}
 	}
 }

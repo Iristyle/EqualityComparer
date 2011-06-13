@@ -65,7 +65,7 @@ namespace EPS.Utility.Tests.Unit
 			A a = new A(3, "Foo"),
 			b = new A(3, "Foo");
 
-			Assert.Equal(a, b, GenericEqualityComparer<A>.ByAllProperties());
+			Assert.Equal(a, b, GenericEqualityComparer<A>.ByAllMembers());
 		}
 
 		[Fact]
@@ -74,7 +74,7 @@ namespace EPS.Utility.Tests.Unit
 			A a = new A(5, "Foo"),
 			b = new A(3, "Bar");
 
-			Assert.NotEqual(a, b, GenericEqualityComparer<A>.ByAllProperties());
+			Assert.NotEqual(a, b, GenericEqualityComparer<A>.ByAllMembers());
 		}
 	}
 }

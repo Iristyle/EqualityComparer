@@ -52,7 +52,7 @@
     <Compile Include="Linq\Extensions.cs" />
     <Compile Include="Linq\QueryableExtensions.cs" />
     <Compile Include="Net\CookieHelper.cs" />
-    <Compile Include="PropertyComparer.cs" />
+    <Compile Include="MemberComparer.cs" />
     <Compile Include="Reflection\ConstructorInfoComparer.cs" />
     <Compile Include="Reflection\EventInfoComparer.cs" />
     <Compile Include="Reflection\FieldInfoComparer.cs" />
