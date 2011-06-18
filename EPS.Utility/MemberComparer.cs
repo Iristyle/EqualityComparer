@@ -44,6 +44,10 @@ namespace EPS
 			}
 			foreach (var comparer in customComparers)
 			{		
+				if (null == comparer.Value)
+				{
+					throw new ArgumentNullException("List of comparers contains a null IEqualityComparer", "customComparers");
+				}
 				//ensure that the dictionary specifices proper mapping of type to comparer
 				var comparerType = typeof(IEqualityComparer<>).GetGenericInterfaceTypeParameters(comparer.Value.GetType()).First();
 				if (comparer.Key != comparerType)
@@ -102,7 +106,8 @@ namespace EPS
 				var members = t.GetProperties().OfType<MemberInfo>().Union(t.GetFields()).ToArray();
 				if (members.Length == 0) { return; }
 
-				Expression body = BuildRecursiveComparison(members, x, y, customComparers, null, null);
+				Expression body = CallExpressionIfNoComparer(BuildRecursiveComparison(members, x, y, customComparers, null, null),
+					customComparers, t, x, y);
 				Compare = Expression.Lambda<Func<T, T, IDictionary<Type, IEqualityComparer>, bool>>(body, x, y, customComparers)
 					.Compile();
 			}
@@ -111,6 +116,26 @@ namespace EPS
 				return Expression.Call(typeof(System.Linq.Enumerable), "SequenceEqual", new Type[] { genericTypeParam },
 					new Expression[] { xProperty, yProperty, Expression.Call(typeof(GenericEqualityComparer<>).MakeGenericType(genericTypeParam), "ByAllMembers", null, comparers) });
 			}
+
+			private static BinaryExpression CallComparerIfAvailable(Expression comparers, Type memberType, Expression xPropertyOrField, Expression yPropertyOrField)
+			{
+				//(comparers.ContainsKey(memberType) && ((IEqualityComparer<memberType>)comparers[memberType]).Equals(x, y))
+				return BinaryExpression.AndAlso(
+					Expression.Call(comparers, "ContainsKey", null, Expression.Constant(memberType)),
+					Expression.Call(Expression.TypeAs(
+						Expression.MakeIndex(comparers, typeof(IDictionary<Type, IEqualityComparer>).GetProperty("Item", new [] { typeof(Type) }), new [] { Expression.Constant(memberType)}), 
+						typeof(IEqualityComparer<>).MakeGenericType(memberType)), "Equals", null, xPropertyOrField, yPropertyOrField));
+			}
+
+			private static BinaryExpression CallExpressionIfNoComparer(Expression comparison, Expression comparers, Type memberType, Expression xPropertyOrField, Expression yPropertyOrField)
+			{
+				return BinaryExpression.Or(
+					CallComparerIfAvailable(comparers, memberType, xPropertyOrField, yPropertyOrField),
+						Expression.AndAlso(
+							Expression.IsFalse(Expression.Call(comparers, "ContainsKey", null, Expression.Constant(memberType))),
+							comparison));				
+			}
+
 
 			private static Expression BuildRecursiveComparison(MemberInfo[] members, Expression x, Expression y, Expression comparers, Expression parentNullChecks, Expression body)
 			{
@@ -128,18 +153,11 @@ namespace EPS
 						yPropertyOrField = Expression.PropertyOrField(y, members[i].Name);
 
 					if (memberType.IsValueType || (memberType.ImplementsItsOwnEqualsMethod() && !memberType.IsAnonymous()))
-					{				
-						//(comparers.ContainsKey(memberType) && ((IEqualityComparer<memberType>)comparers[memberType]).Equals(x, y)) || x == y
-						var propEqual = BinaryExpression.Or(
-							BinaryExpression.AndAlso(
-								Expression.Call(comparers, "ContainsKey", null, Expression.Constant(memberType)),
-								Expression.Call(Expression.TypeAs(Expression.MakeIndex(comparers, typeof(IDictionary<Type, IEqualityComparer>).GetProperty("Item", new[] { typeof(Type) }), new[] { Expression.Constant(memberType) }), typeof(IEqualityComparer<>).MakeGenericType(memberType)), "Equals", null, xPropertyOrField, yPropertyOrField)),
-							Expression.Equal(xPropertyOrField, yPropertyOrField));
-
+					{										
+						var propEqual = CallExpressionIfNoComparer(Expression.Equal(xPropertyOrField, yPropertyOrField), comparers, memberType, xPropertyOrField, yPropertyOrField);
 						
 						// this type supports value comparison so we can just compare it.       
-						//var propEqual = Expression.Equal(xPropertyOrField, yPropertyOrField); //x.Property == y.Property
-						propertyEqualities = propertyEqualities == null ? (BinaryExpression)propEqual : Expression.AndAlso(propertyEqualities, propEqual);
+						propertyEqualities = propertyEqualities == null ? propEqual : Expression.AndAlso(propertyEqualities, propEqual);
 						//i.e. (x.Property == y.Property) && (x.Property2 == y.Property2) .... 
 					}
 					else if (typeof(IEnumerable<>).IsGenericInterfaceAssignableFrom(memberType))
@@ -177,8 +195,10 @@ namespace EPS
 						var recursiveProperty =
 							//prefixing with the null check to this point
 							Expression.AndAlso(nullChecktoThisDepth,
-							//and recurse the property and all it's nested properties
-							BuildRecursiveComparison(memberType.GetProperties(), xPropertyOrField, yPropertyOrField, comparers, nullChecktoThisDepth, recursiveProperties));
+							//and either use a passed comparer or recurse the property and all it's nested properties
+							CallExpressionIfNoComparer(
+								BuildRecursiveComparison(memberType.GetProperties(), xPropertyOrField, yPropertyOrField, comparers, nullChecktoThisDepth, recursiveProperties), 
+								comparers, memberType, xPropertyOrField, yPropertyOrField));
 
 						//now combine that with a null for OKs -- i.e. x.Property != null && y.Property != null
 						var propertiesAreBothNull = Expression.AndAlso(Expression.Equal(xPropertyOrField, nullExpression), Expression.Equal(yPropertyOrField, nullExpression));

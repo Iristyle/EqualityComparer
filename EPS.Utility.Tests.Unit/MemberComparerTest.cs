@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Xunit;
 
@@ -6,6 +7,39 @@ namespace EPS.Utility.Tests.Unit
 {
 	public class MemberComparerTest
 	{
+		[Fact]
+		public void Equal_ThrowsOnNullEqualityComparerDictionary()
+		{
+			Assert.Throws<ArgumentNullException>(() => MemberComparer.Equal(4, 4, null));
+		}
+
+		[Fact]
+		public void Equal_ThrowsOnNullTypeInComparerDictionary()
+		{
+			Assert.Throws<ArgumentNullException>(() => MemberComparer.Equal(4, 4, new Dictionary<Type, IEqualityComparer>()
+			{ 
+				{ null, GenericEqualityComparer<int>.ByAllMembers() }
+			}));
+		}
+
+		[Fact]
+		public void Equal_ThrowsOnNullComparerInComparerDictionary()
+		{
+			Assert.Throws<ArgumentNullException>(() => MemberComparer.Equal(4, 4, new Dictionary<Type, IEqualityComparer>()
+			{ 
+				{ typeof(string), null }
+			}));
+		}
+
+		[Fact]
+		public void Equal_ThrowsOnMismatchedComparerType()
+		{
+			Assert.Throws<ArgumentException>(() => MemberComparer.Equal(4, 4, new Dictionary<Type, IEqualityComparer>()
+			{ 
+				{ typeof(string), GenericEqualityComparer<int>.ByAllMembers() }
+			}));
+		}
+
 		[Fact]
 		public void Equal_TrueOnNullXNullY()
 		{
@@ -192,6 +226,18 @@ namespace EPS.Utility.Tests.Unit
 		{
 			string Bar = "bar";
 			Assert.True(MemberComparer.Equal(new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }, new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar },
+				 new Dictionary<Type, System.Collections.IEqualityComparer>()
+				{
+					{ typeof(ClassWithFieldsAndProperties),  new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) } 
+				}));
+		}
+
+		[Fact]
+		public void Equal_TrueOnClassWithMismatchedPropertiesAndFieldsWithCustomComparerNested()
+		{
+			string Bar = "bar";
+			Assert.True(MemberComparer.Equal(new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }}, 
+				new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar }},
 				 new Dictionary<Type, System.Collections.IEqualityComparer>()
 				{
 					{ typeof(ClassWithFieldsAndProperties),  new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) } 
