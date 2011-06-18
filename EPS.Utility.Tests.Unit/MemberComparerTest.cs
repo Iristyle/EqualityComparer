@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using EPS;
 using Xunit;
 
 namespace EPS.Utility.Tests.Unit
@@ -61,8 +60,9 @@ namespace EPS.Utility.Tests.Unit
 		public void Equal_TrueOnDifferentObjectsWithSameValues()
 		{
 			Guid sharedGuid = Guid.NewGuid();
-			Assert.True(MemberComparer.Equal(new { PropertyA = "A", Integer = 23, Guid = sharedGuid },
-				new { PropertyA = "A", Integer = 23, Guid = sharedGuid }));
+			DateTime now = DateTime.Now;
+			Assert.True(MemberComparer.Equal(new { PropertyA = "A", Integer = 23, Guid = sharedGuid, Date = now },
+				new { PropertyA = "A", Integer = 23, Guid = sharedGuid, Date = now }));
 		}
 
 		[Fact]
@@ -199,6 +199,57 @@ namespace EPS.Utility.Tests.Unit
 		{
 			string Bar = "bar";
 			Assert.False(MemberComparer.Equal(new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }, new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar }));
+		}
+
+		[Fact]
+		public void Equal_TrueOnExactDates()
+		{
+			DateTime now = DateTime.Now;
+			Assert.True(MemberComparer.Equal(now, now));
+		}
+
+		[Fact]
+		public void Equal_TrueToSecondOnEqualDates()
+		{
+			DateTime now = DateTime.Now;
+			Assert.True(MemberComparer.Equal(now, now, DateComparisonType.ToSecond));
+		}
+
+		[Fact]
+		public void Equal_FalseOnDatesDifferingByLessThanASecond()
+		{
+			DateTime one = DateTime.Parse("07:27:15.01"),
+			two = DateTime.Parse("07:27:15.49");
+
+			Assert.False(MemberComparer.Equal(one, two));
+		}
+
+		[Fact]
+		public void Equal_TrueToSecondOnDatesDifferingByLessThanASecond()
+		{
+			DateTime one = DateTime.Parse("07:27:15.01"),
+			two = DateTime.Parse("07:27:15.49");
+
+			Assert.True(MemberComparer.Equal(one, two, DateComparisonType.ToSecond));
+		}
+
+		[Fact]
+		public void Equal_TrueToSecondOnNestedDatesDifferingByLessThanASecond()
+		{
+			DateTime one = DateTime.Parse("07:27:15.01"),
+			two = DateTime.Parse("07:27:15.49");
+
+			var a = new { Foo = 5, Bar = new { Now = one } };
+			var b = new { Foo = 5, Bar = new { Now = two } };
+
+			Assert.True(MemberComparer.Equal(one, two, DateComparisonType.ToSecond));
+		}
+
+		[Fact]
+		public void Equal_TrueToSecondOnNestedCollectionOfDatesDifferingByLessThanASecond()
+		{
+			var dates = new [] { DateTime.Parse("07:27:15.01"), DateTime.Parse("07:27:15.49") };
+			Assert.True(MemberComparer.Equal(new { A = 1, Dates = dates }, new { A = 1, Dates = dates }, DateComparisonType.ToSecond));
 		}
 	}
 }

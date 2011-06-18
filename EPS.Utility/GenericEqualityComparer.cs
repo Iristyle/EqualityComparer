@@ -62,5 +62,16 @@ namespace EPS.Utility
 		{
 			return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y));
 		}
+
+		/// <summary>	
+		/// Shortcut method to get a simple generic IEqualityComparer{T} where the comparison is by all properties and fields on the instance. 
+		/// </summary>
+		/// <remarks>	ebrown, 6/6/2011. </remarks>
+		/// <param name="dateComparisonType">	Type of the date comparison. </param>
+		/// <returns>	A GenericEqualityComparer{T}. </returns>
+		public static GenericEqualityComparer<T> ByAllMembers(DateComparisonType dateComparisonType)
+		{
+			return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y, dateComparisonType));
+		}
 	}
 }
