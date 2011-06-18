@@ -23,18 +23,19 @@ namespace EPS
 		/// <returns>   true if the objects are equivalent by comparison of properties OR both instances are NULL, false if not. </returns>
 		public static bool Equal<T>(T instanceX, T instanceY)
 		{
-			return Equal(instanceX, instanceY, new Dictionary<Type, IEqualityComparer>());
+			return Equal(instanceX, instanceY, new IEqualityComparer[] { });
 		}
 
 		/// <summary>	Does a public property by property and field by field comparison of the two objects. </summary>
 		/// <remarks>	ebrown, 1/19/2011. </remarks>
-		/// <exception cref="ArgumentNullException">	Thrown when one the Dictionary of custom comparers is null. </exception>
+		/// <exception cref="ArgumentNullException">	Thrown when the list of comparers is null, the comparers are not also instances of IEqualityComparer{} or any of the comparers are null. </exception>
+		/// <exception cref="ArgumentException">		Thrown when there is more than one comparer for a given type. </exception>
 		/// <typeparam name="T">	Generic type parameter - inferred by compiler. </typeparam>
 		/// <param name="instanceX">		The first instance. </param>
 		/// <param name="instanceY">		The second instance. </param>
 		/// <param name="customComparers">	A variable-length parameters list containing custom comparers. </param>
 		/// <returns>	true if the objects are equivalent by comparison of properties OR both instances are NULL, false if not. </returns>
-		public static bool Equal<T>(T instanceX, T instanceY, IDictionary<Type, IEqualityComparer> customComparers)
+		public static bool Equal<T>(T instanceX, T instanceY, IEnumerable<IEqualityComparer> customComparers)
 		{
 			if (null == instanceX && null == instanceY) { return true; }
 			if (null == instanceX || null == instanceY) { return false; }
@@ -42,21 +43,29 @@ namespace EPS
 			{
 				throw new ArgumentNullException("customComparers");
 			}
-			foreach (var comparer in customComparers)
-			{		
-				if (null == comparer.Value)
-				{
-					throw new ArgumentNullException("List of comparers contains a null IEqualityComparer", "customComparers");
-				}
-				//ensure that the dictionary specifices proper mapping of type to comparer
-				var comparerType = typeof(IEqualityComparer<>).GetGenericInterfaceTypeParameters(comparer.Value.GetType()).First();
-				if (comparer.Key != comparerType)
-				{
-					throw new ArgumentException("Comparer for type " + comparer.Key.Name + " is an IEquality<" + comparerType.Name + ">", "customComparers");
-				}
+			
+			if (customComparers.Any(comparer => null == comparer))
+			{
+				throw new ArgumentNullException("List of comparers contains a null IEqualityComparer", "customComparers");
 			}
 
-			return Cache<T>.Compare(instanceX, instanceY, customComparers);
+			Type genericEqualityComparer = typeof(IEqualityComparer<>);
+			if (customComparers.Any(comparer => !genericEqualityComparer.IsGenericInterfaceAssignableFrom(comparer.GetType())))
+			{
+				throw new ArgumentException("All comparer instance mustu implement IEqualityComparer<>", "customComparers");
+			}
+						
+			var comparerPairs = customComparers.Select(comparer => 
+				new KeyValuePair<Type, IEqualityComparer>(genericEqualityComparer.GetGenericInterfaceTypeParameters(comparer.GetType()).First(), comparer));
+			
+			if (comparerPairs.Select(pair => pair.Key).Distinct().Count() != comparerPairs.Count())
+			{
+				throw new ArgumentException("Only one IEqualityComparer<> instance per Type is allowed in the list");
+			}
+
+			var customComparerDictionary = comparerPairs.ToDictionary(pair => pair.Key, pair => pair.Value);
+			
+			return Cache<T>.Compare(instanceX, instanceY, customComparerDictionary);
 		}
 
 		static bool ImplementsItsOwnEqualsMethod(this Type type)
@@ -114,7 +123,7 @@ namespace EPS
 			private static MethodCallExpression SequencesOfTypeAreEqual(Expression xProperty, Expression yProperty, Type genericTypeParam, Expression comparers)
 			{
 				return Expression.Call(typeof(System.Linq.Enumerable), "SequenceEqual", new Type[] { genericTypeParam },
-					new Expression[] { xProperty, yProperty, Expression.Call(typeof(GenericEqualityComparer<>).MakeGenericType(genericTypeParam), "ByAllMembers", null, comparers) });
+					new Expression[] { xProperty, yProperty, Expression.Call(typeof(GenericEqualityComparer<>).MakeGenericType(genericTypeParam), "ByAllMembers", null, Expression.Property(comparers, "Values" )) });
 			}
 
 			private static BinaryExpression CallComparerIfAvailable(Expression comparers, Type memberType, Expression xPropertyOrField, Expression yPropertyOrField)

@@ -8,36 +8,40 @@ namespace EPS.Utility.Tests.Unit
 	public class MemberComparerTest
 	{
 		[Fact]
-		public void Equal_ThrowsOnNullEqualityComparerDictionary()
+		public void Equal_ThrowsOnNullEqualityComparerList()
 		{
 			Assert.Throws<ArgumentNullException>(() => MemberComparer.Equal(4, 4, null));
 		}
 
 		[Fact]
-		public void Equal_ThrowsOnNullTypeInComparerDictionary()
+		public void Equal_ThrowsOnNullComparerInComparerList()
 		{
-			Assert.Throws<ArgumentNullException>(() => MemberComparer.Equal(4, 4, new Dictionary<Type, IEqualityComparer>()
-			{ 
-				{ null, GenericEqualityComparer<int>.ByAllMembers() }
-			}));
+			Assert.Throws<ArgumentNullException>(() => MemberComparer.Equal(4, 4, new IEqualityComparer[] { null }));
+		}
+
+		private class FooComparer : IEqualityComparer
+		{
+			public bool Equals(object x, object y)
+			{
+				throw new NotImplementedException();
+			}
+
+			public int GetHashCode(object obj)
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		[Fact]
-		public void Equal_ThrowsOnNullComparerInComparerDictionary()
+		public void Equal_ThrowsOnNonGenericEqualityComparerInList()
 		{
-			Assert.Throws<ArgumentNullException>(() => MemberComparer.Equal(4, 4, new Dictionary<Type, IEqualityComparer>()
-			{ 
-				{ typeof(string), null }
-			}));
+			Assert.Throws<ArgumentException>(() => MemberComparer.Equal(4, 4, new[] { new FooComparer() }));
 		}
 
 		[Fact]
-		public void Equal_ThrowsOnMismatchedComparerType()
+		public void Equal_ThrowsOnMoreThanOneComparerForATypeInList()
 		{
-			Assert.Throws<ArgumentException>(() => MemberComparer.Equal(4, 4, new Dictionary<Type, IEqualityComparer>()
-			{ 
-				{ typeof(string), GenericEqualityComparer<int>.ByAllMembers() }
-			}));
+			Assert.Throws<ArgumentException>(() => MemberComparer.Equal(4, 4, new[] { GenericEqualityComparer<int>.ByAllMembers(), GenericEqualityComparer<int>.ByAllMembers() }));
 		}
 
 		[Fact]
@@ -226,10 +230,7 @@ namespace EPS.Utility.Tests.Unit
 		{
 			string Bar = "bar";
 			Assert.True(MemberComparer.Equal(new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }, new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar },
-				 new Dictionary<Type, System.Collections.IEqualityComparer>()
-				{
-					{ typeof(ClassWithFieldsAndProperties),  new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) } 
-				}));
+				 new [] { new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) })); 
 		}
 
 		[Fact]
@@ -238,10 +239,7 @@ namespace EPS.Utility.Tests.Unit
 			string Bar = "bar";
 			Assert.True(MemberComparer.Equal(new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }}, 
 				new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar }},
-				 new Dictionary<Type, System.Collections.IEqualityComparer>()
-				{
-					{ typeof(ClassWithFieldsAndProperties),  new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) } 
-				}));
+				new [] { new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) }));
 		}
 		
 		[Fact]
@@ -269,10 +267,7 @@ namespace EPS.Utility.Tests.Unit
 		public void Equal_TrueToSecondOnEqualDates()
 		{
 			DateTime now = DateTime.Now;
-			Assert.True(MemberComparer.Equal(now, now, new Dictionary<Type, System.Collections.IEqualityComparer>()
-			{
-				{ typeof(DateTime),  new DateComparer(DateComparisonType.ToSecond) } 
-			}));
+			Assert.True(MemberComparer.Equal(now, now, new [] { new DateComparer(DateComparisonType.ToSecond) } ));
 		}
 
 		[Fact]
@@ -290,10 +285,7 @@ namespace EPS.Utility.Tests.Unit
 			DateTime one = DateTime.Parse("07:27:15.01"),
 			two = DateTime.Parse("07:27:15.49");
 
-			Assert.True(MemberComparer.Equal(one, two,  new Dictionary<Type, System.Collections.IEqualityComparer>()
-			{
-				{ typeof(DateTime),  new DateComparer(DateComparisonType.ToSecond) } 
-			}));
+			Assert.True(MemberComparer.Equal(one, two, new[] { new DateComparer(DateComparisonType.ToSecond) }));
 		}
 
 		[Fact]
@@ -305,20 +297,14 @@ namespace EPS.Utility.Tests.Unit
 			var a = new { Foo = 5, Bar = new { Now = one } };
 			var b = new { Foo = 5, Bar = new { Now = two } };
 
-			Assert.True(MemberComparer.Equal(one, two,  new Dictionary<Type, System.Collections.IEqualityComparer>()
-			{
-				{ typeof(DateTime),  new DateComparer(DateComparisonType.ToSecond) } 
-			}));
+			Assert.True(MemberComparer.Equal(one, two, new[] { new DateComparer(DateComparisonType.ToSecond) }));
 		}
 
 		[Fact]
 		public void Equal_TrueToSecondOnNestedCollectionOfDatesDifferingByLessThanASecondWithCustomComparer()
 		{
 			var dates = new [] { DateTime.Parse("07:27:15.01"), DateTime.Parse("07:27:15.49") };
-			Assert.True(MemberComparer.Equal(new { A = 1, Dates = dates }, new { A = 1, Dates = dates },  new Dictionary<Type, System.Collections.IEqualityComparer>()
-			{
-				{ typeof(DateTime),  new DateComparer(DateComparisonType.ToSecond) } 
-			}));
+			Assert.True(MemberComparer.Equal(new { A = 1, Dates = dates }, new { A = 1, Dates = dates }, new[] { new DateComparer(DateComparisonType.ToSecond) }));
 		}
 	}
 }

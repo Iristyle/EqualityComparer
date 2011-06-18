@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace EPS.Utility
 {
-	/// <summary>   A generic comparer that takes aceepts a Func{T, T, bool} to create simple on-the-fly comparison routines. </summary>
+	/// <summary>   A generic comparer that takes accepts a Func{T, T, bool} to create simple on-the-fly comparison routines. </summary>
 	/// <remarks>   ebrown, 2/7/2011. </remarks>
 	public class GenericEqualityComparer<T> : EqualityComparer<T>
 	{
@@ -66,12 +66,12 @@ namespace EPS.Utility
 
 		/// <summary>	
 		/// Shortcut method to get a simple generic IEqualityComparer{T} where the comparison is by all properties and fields on the instance,
-		/// with user defined overrides available on specific fields. 
+		/// with user defined overrides available on specific encountered types. 
 		/// </summary>
 		/// <remarks>	ebrown, 6/6/2011. </remarks>
-		/// <param name="customComparers">	Type of the date comparison. </param>
+		/// <param name="customComparers">	A set of additional comparers to use to override default member by member comparison. </param>
 		/// <returns>	A GenericEqualityComparer{T}. </returns>
-		public static GenericEqualityComparer<T> ByAllMembers(IDictionary<Type, IEqualityComparer> customComparers)
+		public static GenericEqualityComparer<T> ByAllMembers(IEnumerable<IEqualityComparer> customComparers)
 		{
 			return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y, customComparers));
 		}
