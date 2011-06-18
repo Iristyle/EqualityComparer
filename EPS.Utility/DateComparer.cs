@@ -33,7 +33,7 @@ namespace EPS
 		/// <param name="x">	Date time to be compared. </param>
 		/// <param name="y">	Date time to be compared. </param>
 		/// <returns>	true if the objects are considered equal, false if they are not. </returns>
-		public bool Equals(DateTime x, DateTime y)
+		public override bool Equals(DateTime x, DateTime y)
 		{
 			switch (comparisonType)
 			{
@@ -49,7 +49,7 @@ namespace EPS
 		/// <remarks>	ebrown, 6/18/2011. </remarks>
 		/// <param name="obj">	Date/Time of the object. </param>
 		/// <returns>	The hash code for this object. </returns>
-		public int GetHashCode(DateTime obj)
+		public override int GetHashCode(DateTime obj)
 		{
 			switch (comparisonType)
 			{

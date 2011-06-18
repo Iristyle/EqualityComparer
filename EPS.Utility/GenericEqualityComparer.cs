@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace EPS.Utility
 {
 	/// <summary>   A generic comparer that takes aceepts a Func{T, T, bool} to create simple on-the-fly comparison routines. </summary>
 	/// <remarks>   ebrown, 2/7/2011. </remarks>
-	public class GenericEqualityComparer<T> : IEqualityComparer<T>
+	public class GenericEqualityComparer<T> : EqualityComparer<T>
 	{
 		private readonly Func<T, T, bool> _comparer;
 		private readonly Func<T, int> _hasher;
@@ -39,7 +40,7 @@ namespace EPS.Utility
 		/// <param name="x">    T to be compared. </param>
 		/// <param name="y">    T to be compared. </param>
 		/// <returns>   true if the objects are considered equal, false if they are not. </returns>
-		public bool Equals(T x, T y)
+		public override bool Equals(T x, T y)
 		{
 			return this._comparer(x, y);
 		}
@@ -48,7 +49,7 @@ namespace EPS.Utility
 		/// <remarks>   If no hasher function was supplied, will always return 0.  Otherwise uses Func{T, int} hasher function supplied. </remarks>
 		/// <param name="obj">  The object. </param>
 		/// <returns>   The hash code for this object. </returns>
-		public int GetHashCode(T obj)
+		public override int GetHashCode(T obj)
 		{
 			return this._hasher(obj);
 		}
@@ -64,14 +65,15 @@ namespace EPS.Utility
 		}
 
 		/// <summary>	
-		/// Shortcut method to get a simple generic IEqualityComparer{T} where the comparison is by all properties and fields on the instance. 
+		/// Shortcut method to get a simple generic IEqualityComparer{T} where the comparison is by all properties and fields on the instance,
+		/// with user defined overrides available on specific fields. 
 		/// </summary>
 		/// <remarks>	ebrown, 6/6/2011. </remarks>
-		/// <param name="dateComparisonType">	Type of the date comparison. </param>
+		/// <param name="customComparers">	Type of the date comparison. </param>
 		/// <returns>	A GenericEqualityComparer{T}. </returns>
-		public static GenericEqualityComparer<T> ByAllMembers(DateComparisonType dateComparisonType)
+		public static GenericEqualityComparer<T> ByAllMembers(IDictionary<Type, IEqualityComparer> customComparers)
 		{
-			return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y, dateComparisonType));
+			return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y, customComparers));
 		}
 	}
 }

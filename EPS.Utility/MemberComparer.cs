@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -22,24 +23,36 @@ namespace EPS
 		/// <returns>   true if the objects are equivalent by comparison of properties OR both instances are NULL, false if not. </returns>
 		public static bool Equal<T>(T instanceX, T instanceY)
 		{
-			if (null == instanceX && null == instanceY) { return true; }
-			if (null == instanceX || null == instanceY) { return false; }
-
-			return Cache<T>.Compare(instanceX, instanceY, DateComparisonType.Exact);
+			return Equal(instanceX, instanceY, new Dictionary<Type, IEqualityComparer>());
 		}
 
-		/// <summary>   Does a public property by property and field by field comparison of the two objects. </summary>
-		/// <remarks>   ebrown, 1/19/2011. </remarks>
-		/// <typeparam name="T">    Generic type parameter - inferred by compiler. </typeparam>
-		/// <param name="instanceX">    The first instance. </param>
-		/// <param name="instanceY">    The second instance. </param>
-		/// <returns>   true if the objects are equivalent by comparison of properties OR both instances are NULL, false if not. </returns>
-		public static bool Equal<T>(T instanceX, T instanceY, DateComparisonType dateComparisonType)
+		/// <summary>	Does a public property by property and field by field comparison of the two objects. </summary>
+		/// <remarks>	ebrown, 1/19/2011. </remarks>
+		/// <exception cref="ArgumentNullException">	Thrown when one the Dictionary of custom comparers is null. </exception>
+		/// <typeparam name="T">	Generic type parameter - inferred by compiler. </typeparam>
+		/// <param name="instanceX">		The first instance. </param>
+		/// <param name="instanceY">		The second instance. </param>
+		/// <param name="customComparers">	A variable-length parameters list containing custom comparers. </param>
+		/// <returns>	true if the objects are equivalent by comparison of properties OR both instances are NULL, false if not. </returns>
+		public static bool Equal<T>(T instanceX, T instanceY, IDictionary<Type, IEqualityComparer> customComparers)
 		{
 			if (null == instanceX && null == instanceY) { return true; }
 			if (null == instanceX || null == instanceY) { return false; }
+			if (null == customComparers)
+			{
+				throw new ArgumentNullException("customComparers");
+			}
+			foreach (var comparer in customComparers)
+			{		
+				//ensure that the dictionary specifices proper mapping of type to comparer
+				var comparerType = typeof(IEqualityComparer<>).GetGenericInterfaceTypeParameters(comparer.Value.GetType()).First();
+				if (comparer.Key != comparerType)
+				{
+					throw new ArgumentException("Comparer for type " + comparer.Key.Name + " is an IEquality<" + comparerType.Name + ">", "customComparers");
+				}
+			}
 
-			return Cache<T>.Compare(instanceX, instanceY, dateComparisonType);
+			return Cache<T>.Compare(instanceX, instanceY, customComparers);
 		}
 
 		static bool ImplementsItsOwnEqualsMethod(this Type type)
@@ -51,38 +64,37 @@ namespace EPS
 		static class Cache<T>
 		{
 			//instance, instance, 
-			internal static readonly Func<T, T, DateComparisonType, bool> Compare = delegate { return true; };
+			internal static readonly Func<T, T, IDictionary<Type, IEqualityComparer>, bool> Compare = delegate { return true; };
 
 			[SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "More readable with static constructor / no easy way to write without")]
 			static Cache()
 			{
 				Type t = typeof(T);
+
 				if (typeof(string) == t)
 				{
-					Compare = (stringX, stringY, dateComparisonType) => StringComparer.Ordinal.Equals(stringX, stringY);
+					Compare = (stringX, stringY, comparers) => comparers.ContainsKey(t) ? 
+						comparers[t].Equals(stringX, stringY) :
+						StringComparer.Ordinal.Equals(stringX, stringY);
 					return;
 				}
-				else if (typeof(DateTime) == t || typeof(DateTime?) == t)
+				else if (t.IsValueType || t.IsPrimitive)
 				{
-					Compare = (dateX, dateY, dateComparisonType) => dateComparisonType == DateComparisonType.Exact ? dateX.Equals(dateY) : 
-						new DateComparer(dateComparisonType).Equals(Convert.ToDateTime(dateX), Convert.ToDateTime(dateY));
-						return;
-				}
-				else if (t.IsPrimitive)
-				{
-					Compare = (primitiveX, primitiveY, dateComparisonType) => primitiveX.Equals(primitiveY);
+					Compare = (valueX, valueY, comparers) => comparers.ContainsKey(t) ?
+						comparers[t].Equals(valueX, valueY) : 
+						valueX.Equals(valueY);
 					return;
 				}
 
 				var x = Expression.Parameter(t, "x");
 				var y = Expression.Parameter(t, "y");
-				var dateComparisonTypeParameter = Expression.Parameter(typeof(DateComparisonType), "dateComparisonType");
-
+				var customComparers = Expression.Parameter(typeof(IDictionary<Type, IEqualityComparer>), "customComparers");
+				
 				if (typeof(IEnumerable<>).IsGenericInterfaceAssignableFrom(t))
 				{
 					Type genericTypeParam = (typeof(IEnumerable<>)).GetGenericInterfaceTypeParameters(t).First();
 					//Type genericType = typeof(IEnumerable<>).MakeGenericType(genericTypeParam);
-					Compare = Expression.Lambda<Func<T, T, DateComparisonType, bool>>(SequencesOfTypeAreEqual(x, y, genericTypeParam, dateComparisonTypeParameter), x, y, dateComparisonTypeParameter)
+					Compare = Expression.Lambda<Func<T, T, IDictionary<Type, IEqualityComparer>, bool>>(SequencesOfTypeAreEqual(x, y, genericTypeParam, customComparers), x, y, customComparers)
 						.Compile();
 					return;
 				};
@@ -90,17 +102,17 @@ namespace EPS
 				var members = t.GetProperties().OfType<MemberInfo>().Union(t.GetFields()).ToArray();
 				if (members.Length == 0) { return; }
 
-				Expression body = BuildRecursiveComparison(members, x, y, dateComparisonTypeParameter, null, null);
-				Compare = Expression.Lambda<Func<T, T, DateComparisonType, bool>>(body, x, y, dateComparisonTypeParameter)
+				Expression body = BuildRecursiveComparison(members, x, y, customComparers, null, null);
+				Compare = Expression.Lambda<Func<T, T, IDictionary<Type, IEqualityComparer>, bool>>(body, x, y, customComparers)
 					.Compile();
 			}
-			private static MethodCallExpression SequencesOfTypeAreEqual(Expression xProperty, Expression yProperty, Type genericTypeParam, Expression dateComparisonProperty)
+			private static MethodCallExpression SequencesOfTypeAreEqual(Expression xProperty, Expression yProperty, Type genericTypeParam, Expression comparers)
 			{
 				return Expression.Call(typeof(System.Linq.Enumerable), "SequenceEqual", new Type[] { genericTypeParam },
-					new Expression[] { xProperty, yProperty, Expression.Call(typeof(GenericEqualityComparer<>).MakeGenericType(genericTypeParam), "ByAllMembers", null, dateComparisonProperty) });
+					new Expression[] { xProperty, yProperty, Expression.Call(typeof(GenericEqualityComparer<>).MakeGenericType(genericTypeParam), "ByAllMembers", null, comparers) });
 			}
 
-			private static Expression BuildRecursiveComparison(MemberInfo[] members, Expression x, Expression y, Expression dateComparisonType, Expression parentNullChecks, Expression body)
+			private static Expression BuildRecursiveComparison(MemberInfo[] members, Expression x, Expression y, Expression comparers, Expression parentNullChecks, Expression body)
 			{
 				//nothing to see here -- move on
 				if (members.Length == 0)
@@ -115,27 +127,19 @@ namespace EPS
 					Expression xPropertyOrField = Expression.PropertyOrField(x, members[i].Name),
 						yPropertyOrField = Expression.PropertyOrField(y, members[i].Name);
 
-					if (typeof(DateTime) == memberType || typeof(DateTime?) == memberType)
-					{
-						Expression castToDateTimeX = Expression.TypeAs(xPropertyOrField, typeof(DateTime?));
-						Expression castToDateTimeY = Expression.TypeAs(yPropertyOrField, typeof(DateTime?));
-
-						Expression toSecond = Expression.AndAlso(Expression.Equal(Expression.Constant(DateComparisonType.ToSecond), dateComparisonType),
-							Expression.Call(Expression.Assign(Expression.Variable(typeof(DateComparer), "comparer"), 
-								Expression.New(typeof(DateComparer))), 
-								"Equals", null, castToDateTimeX, castToDateTimeY));
-						
-						Expression exact = Expression.Equal(xPropertyOrField, yPropertyOrField);
-
-						Expression datesEqual = Expression.Or(toSecond, exact);
-
-						propertyEqualities = propertyEqualities == null ? datesEqual : Expression.AndAlso(propertyEqualities, datesEqual);
-					}
 					if (memberType.IsValueType || (memberType.ImplementsItsOwnEqualsMethod() && !memberType.IsAnonymous()))
-					{
+					{				
+						//(comparers.ContainsKey(memberType) && ((IEqualityComparer<memberType>)comparers[memberType]).Equals(x, y)) || x == y
+						var propEqual = BinaryExpression.Or(
+							BinaryExpression.AndAlso(
+								Expression.Call(comparers, "ContainsKey", null, Expression.Constant(memberType)),
+								Expression.Call(Expression.TypeAs(Expression.MakeIndex(comparers, typeof(IDictionary<Type, IEqualityComparer>).GetProperty("Item", new[] { typeof(Type) }), new[] { Expression.Constant(memberType) }), typeof(IEqualityComparer<>).MakeGenericType(memberType)), "Equals", null, xPropertyOrField, yPropertyOrField)),
+							Expression.Equal(xPropertyOrField, yPropertyOrField));
+
+						
 						// this type supports value comparison so we can just compare it.       
-						var propEqual = Expression.Equal(xPropertyOrField, yPropertyOrField); //x.Property == y.Property
-						propertyEqualities = propertyEqualities == null ? propEqual : Expression.AndAlso(propertyEqualities, propEqual);
+						//var propEqual = Expression.Equal(xPropertyOrField, yPropertyOrField); //x.Property == y.Property
+						propertyEqualities = propertyEqualities == null ? (BinaryExpression)propEqual : Expression.AndAlso(propertyEqualities, propEqual);
 						//i.e. (x.Property == y.Property) && (x.Property2 == y.Property2) .... 
 					}
 					else if (typeof(IEnumerable<>).IsGenericInterfaceAssignableFrom(memberType))
@@ -151,7 +155,7 @@ namespace EPS
 							//prefixing with the null check to this point
 							Expression.AndAlso(nullChecktoThisDepth,
 							//and call SequenceEqual on the two sequences, passing a custom IEqualityComparer
-							SequencesOfTypeAreEqual(xPropertyOrField, yPropertyOrField, genericTypeParam, dateComparisonType));
+							SequencesOfTypeAreEqual(xPropertyOrField, yPropertyOrField, genericTypeParam, comparers));
 
 						//now combine that with a null for OKs -- i.e. x.Property != null && y.Property != null
 						var propertiesAreBothNull = Expression.AndAlso(Expression.Equal(xPropertyOrField, nullExpression), Expression.Equal(yPropertyOrField, nullExpression));
@@ -174,7 +178,7 @@ namespace EPS
 							//prefixing with the null check to this point
 							Expression.AndAlso(nullChecktoThisDepth,
 							//and recurse the property and all it's nested properties
-							BuildRecursiveComparison(memberType.GetProperties(), xPropertyOrField, yPropertyOrField, dateComparisonType, nullChecktoThisDepth, recursiveProperties));
+							BuildRecursiveComparison(memberType.GetProperties(), xPropertyOrField, yPropertyOrField, comparers, nullChecktoThisDepth, recursiveProperties));
 
 						//now combine that with a null for OKs -- i.e. x.Property != null && y.Property != null
 						var propertiesAreBothNull = Expression.AndAlso(Expression.Equal(xPropertyOrField, nullExpression), Expression.Equal(yPropertyOrField, nullExpression));
