@@ -1,51 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
+using Xunit.Extensions;
 
 namespace EPS.Utility.Tests.Unit
 {
 	public class DateComparerTest
 	{
+		private static DateTime wellKnownDate = new DateTime(2011, 6, 20, 13, 30, 1, 200);
 
-		[Fact]
-		public void ExactComparison_SameDateTime_ReturnsTrue()
+		public static IEnumerable<object[]> GetEqualToSecondDates
 		{
-			DateTime testValue = new DateTime(2011, 6, 20, 13, 30, 1, 200);
-			Assert.True(new DateComparer(DateComparisonType.Exact).Equals(testValue, testValue));
+			get
+			{
+				yield return new object [] { wellKnownDate, wellKnownDate };
+				yield return new object [] { wellKnownDate, wellKnownDate.AddMilliseconds(100) };
+				yield return new object [] { wellKnownDate, wellKnownDate.AddMilliseconds(799) };
+			}
+		}
+
+		public static IEnumerable<object[]> GetUnequalToSecondDates
+		{
+			get
+			{
+				yield return new object[] { wellKnownDate, wellKnownDate.AddMilliseconds(800) };
+				yield return new object[] { wellKnownDate, wellKnownDate.AddMilliseconds(-201) };
+			}
+		}
+
+		[Theory]
+		[PropertyData("GetEqualToSecondDates")]
+		public void Equals_ToSecond_ReturnsTrue_OnComparisonsWithinSameSecond(DateTime testValue1, DateTime testValue2)
+		{
+			Assert.True(new DateComparer(DateComparisonType.ToSecond).Equals(testValue1, testValue2));
+		}
+
+		[Theory]
+		[PropertyData("GetUnequalToSecondDates")]
+		public void Equals_ToSecond_ReturnsFalse_OnComparisonsOutsideSameSecond(DateTime testValue1, DateTime testValue2)
+		{
+			Assert.False(new DateComparer(DateComparisonType.ToSecond).Equals(testValue1, testValue2));
 		}
 
 		[Fact]
-		public void ExactComparison_DifferentDateTime_ReturnsFalse()
+		public void Equals_ExactComparison_ReturnsFalse_DifferentDateTime()
 		{
-			DateTime testValue = new DateTime(2011, 6, 20, 13, 30, 1, 200);
-			Assert.False(new DateComparer(DateComparisonType.Exact).Equals(testValue, testValue.AddMilliseconds(100)));
+			var now = DateTime.Now;
+			Assert.False(new DateComparer(DateComparisonType.Exact).Equals(now, now.AddTicks(1)));
 		}
 
 		[Fact]
-		public void ToTheSecondComparison_SlightlyDifferentDateTime_ReturnsTrue()
+		public void Equals_ExactComparison_ReturnsTrue_SameTime()
 		{
-			DateTime testValue = new DateTime(2011, 6, 20, 13, 30, 1, 200);
-			Assert.True(new DateComparer(DateComparisonType.ToSecond).Equals(testValue, testValue.AddMilliseconds(200)));
+			var now = DateTime.Now;
+			Assert.True(new DateComparer(DateComparisonType.Exact).Equals(now, now));
 		}
-
-		[Fact]
-		public void ToTheSecondComparison_SlightlyDifferentDateTimeWithDifferentSecondValues_ReturnsTrue()
-		{
-			// note: 900ms + 200ms diff causes the second value to increment.
-			DateTime testValue = new DateTime(2011, 6, 20, 13, 30, 1, 900);
-
-			// TODO: should this return true or false?
-			Assert.True(new DateComparer(DateComparisonType.ToSecond).Equals(testValue, testValue.AddMilliseconds(200)));
-		}
-
-		[Fact]
-		public void ToTheSecondComparison_DateTimeWithDifferenceGreaterThanOneSecond_ReturnsFalse()
-		{
-			DateTime testValue = new DateTime(2011, 6, 20, 13, 30, 1, 900);
-			Assert.False(new DateComparer(DateComparisonType.ToSecond).Equals(testValue, testValue.AddMilliseconds(1100)));
-		}
-
 	}
 }
