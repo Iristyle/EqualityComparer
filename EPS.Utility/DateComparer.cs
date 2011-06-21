@@ -37,7 +37,7 @@ namespace EPS
 		{
 			switch (comparisonType)
 			{
-				case DateComparisonType.ToSecond:
+				case DateComparisonType.TruncatedToSecond:
 					return new DateTime((x.Ticks / TimeSpan.TicksPerSecond) * TimeSpan.TicksPerSecond).Equals(new DateTime((y.Ticks / TimeSpan.TicksPerSecond) * TimeSpan.TicksPerSecond));
 				case DateComparisonType.Exact:
 				default:
@@ -53,7 +53,7 @@ namespace EPS
 		{
 			switch (comparisonType)
 			{
-				case DateComparisonType.ToSecond:
+				case DateComparisonType.TruncatedToSecond:
 					return new DateTime((obj.Ticks / TimeSpan.TicksPerSecond) * TimeSpan.TicksPerSecond).GetHashCode();
 				case DateComparisonType.Exact:
 				default:

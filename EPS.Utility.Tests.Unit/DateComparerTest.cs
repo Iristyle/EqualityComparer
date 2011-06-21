@@ -31,16 +31,16 @@ namespace EPS.Utility.Tests.Unit
 
 		[Theory]
 		[PropertyData("GetEqualToSecondDates")]
-		public void Equals_ToSecond_ReturnsTrue_OnComparisonsWithinSameSecond(DateTime testValue1, DateTime testValue2)
+		public void Equals_TruncatedToSecond_ReturnsTrue_OnComparisonsWithinSameSecond(DateTime testValue1, DateTime testValue2)
 		{
-			Assert.True(new DateComparer(DateComparisonType.ToSecond).Equals(testValue1, testValue2));
+			Assert.True(new DateComparer(DateComparisonType.TruncatedToSecond).Equals(testValue1, testValue2));
 		}
 
 		[Theory]
 		[PropertyData("GetUnequalToSecondDates")]
-		public void Equals_ToSecond_ReturnsFalse_OnComparisonsOutsideSameSecond(DateTime testValue1, DateTime testValue2)
+		public void Equals_TruncatedToSecond_ReturnsFalse_OnComparisonsOutsideSameSecond(DateTime testValue1, DateTime testValue2)
 		{
-			Assert.False(new DateComparer(DateComparisonType.ToSecond).Equals(testValue1, testValue2));
+			Assert.False(new DateComparer(DateComparisonType.TruncatedToSecond).Equals(testValue1, testValue2));
 		}
 
 		[Fact]

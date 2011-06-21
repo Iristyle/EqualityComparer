@@ -8,7 +8,7 @@ namespace EPS
 	{
 		/// <summary> An exact comparison by ticks.  </summary>
 		Exact,
-		/// <summary> A comparison to the nearest second, which can be useful with data stores that do not roundtrip dates properly.  </summary>
-		ToSecond
+		/// <summary> A comparison truncated / always rounded down to the nearest second, which can be useful with data stores that do not roundtrip dates properly.  </summary>
+		TruncatedToSecond
 	}
 }
