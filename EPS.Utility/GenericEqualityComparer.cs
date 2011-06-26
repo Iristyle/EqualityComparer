@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EPS.Utility
 {
@@ -59,6 +60,7 @@ namespace EPS.Utility
 		/// </summary>
 		/// <remarks>	ebrown, 6/6/2011. </remarks>
 		/// <returns>	A GenericEqualityComparer{T}. </returns>
+		[SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification = "A static factory method is perfectly acceptable in this context")]
 		public static GenericEqualityComparer<T> ByAllMembers()
 		{
 			return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y));
@@ -71,6 +73,7 @@ namespace EPS.Utility
 		/// <remarks>	ebrown, 6/6/2011. </remarks>
 		/// <param name="customComparers">	A set of additional comparers to use to override default member by member comparison. </param>
 		/// <returns>	A GenericEqualityComparer{T}. </returns>
+		[SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification = "A static factory method is perfectly acceptable in this context")]
 		public static GenericEqualityComparer<T> ByAllMembers(IEnumerable<IEqualityComparer> customComparers)
 		{
 			return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y, customComparers));
