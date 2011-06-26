@@ -64,6 +64,7 @@
     <Compile Include="Runtime\Serialization\Json\ObjectExtensionsTest.cs" />
     <Compile Include="Security\Cryptography\HashHelpersTest.cs" />
     <Compile Include="Security\LogHelpersTest.cs" />
+    <Compile Include="ShortGuidTest.cs" />
     <Compile Include="StringExtensionTests.cs" />
     <Compile Include="Text\GuidHelperTest.cs" />
     <Compile Include="Text\PatternsTest.cs" />
