@@ -15,17 +15,17 @@ namespace EPS
 
 		/// <summary>	Gets the default DateComparer instance, which is by DateComparisonType.Exact. </summary>
 		/// <value>	The default. </value>
-		public static EqualityComparer<DateTime> Default
+		public static new EqualityComparer<DateTime> Default
 		{
 			get { return _default; }
 		}
 
 		/// <summary>	Initializes a new instance of the DateComparer class. </summary>
 		/// <remarks>	ebrown, 6/18/2011. </remarks>
-		/// <param name="comparisonType">	The method by which dates should be compared. </param>
-		public DateComparer(DateComparisonType comparisonType)
+		/// <param name="dateComparisonType">	The method by which dates should be compared. </param>
+		public DateComparer(DateComparisonType dateComparisonType)
 		{
-			this.comparisonType = comparisonType;
+			this.comparisonType = dateComparisonType;
 		}
 
 		/// <summary>	Tests if two DateTime objects are considered equal, given the DateComparisonType. </summary>
