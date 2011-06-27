@@ -136,7 +136,7 @@ namespace EPS
 						typeof(IEqualityComparer<>).MakeGenericType(memberType)), "Equals", null, xPropertyOrField, yPropertyOrField));
 			}
 
-			private static BinaryExpression CallExpressionIfNoComparer(Expression comparison, Expression comparers, Type memberType, Expression xPropertyOrField, Expression yPropertyOrField)
+			private static BinaryExpression CallExpressionIfNoComparer(Expression comparison, ParameterExpression comparers, Type memberType, Expression xPropertyOrField, Expression yPropertyOrField)
 			{
 				return BinaryExpression.Or(
 					CallComparerIfAvailable(comparers, memberType, xPropertyOrField, yPropertyOrField),
@@ -171,7 +171,7 @@ namespace EPS
 				if (members.Length == 0)
 					return body;
 
-				Expression propertyEqualities = null;
+				BinaryExpression propertyEqualities = null;
 				BinaryExpression recursiveProperties = null;
 
 				for (int i = 0; i < members.Length; i++)
@@ -208,7 +208,7 @@ namespace EPS
 				}
 
 				//to make it this far we either had simple properties or nested recursive stuff
-				Expression depthCheck = null != propertyEqualities && null != recursiveProperties ? Expression.AndAlso(propertyEqualities, recursiveProperties)
+				BinaryExpression depthCheck = null != propertyEqualities && null != recursiveProperties ? Expression.AndAlso(propertyEqualities, recursiveProperties)
 					: propertyEqualities ?? recursiveProperties;
 
 				//combine that with our main running expression if there is one
