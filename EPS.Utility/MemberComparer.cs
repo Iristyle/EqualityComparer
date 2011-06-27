@@ -46,13 +46,13 @@ namespace EPS
 			
 			if (customComparers.Any(comparer => null == comparer))
 			{
-				throw new ArgumentNullException("List of comparers contains a null IEqualityComparer", "customComparers");
+				throw new ArgumentNullException("customComparers", "List of comparers contains a null IEqualityComparer");
 			}
 
 			Type genericEqualityComparer = typeof(IEqualityComparer<>);
 			if (customComparers.Any(comparer => !genericEqualityComparer.IsGenericInterfaceAssignableFrom(comparer.GetType())))
 			{
-				throw new ArgumentException("All comparer instance mustu implement IEqualityComparer<>", "customComparers");
+				throw new ArgumentException("All comparer instances must implement IEqualityComparer<>", "customComparers");
 			}
 						
 			var comparerPairs = customComparers.Select(comparer => 
@@ -145,20 +145,39 @@ namespace EPS
 							comparison));				
 			}
 
+			private static BinaryExpression CustomPropertyComparison(MemberExpression xPropertyOrField, MemberExpression yPropertyOrField, BinaryExpression parentNullChecks, BinaryExpression recursiveProperties,
+				Func<BinaryExpression, Expression> customCheckToThisLevel)
+			{
+				var nullExpression = Expression.Constant(null);
+				//x.Property != null && y.Property != null
+				var propertyNotNullCheck = Expression.AndAlso(Expression.NotEqual(xPropertyOrField, nullExpression), Expression.NotEqual(yPropertyOrField, nullExpression));
+				//combine with any parent null checking to this depth -- i.e. (x.Property != null && y.Property != null && x.Property.Property != null && y.Property.Property != null)
+				var nullChecktoThisDepth = null == parentNullChecks ? propertyNotNullCheck : Expression.AndAlso(parentNullChecks, propertyNotNullCheck);
 
-			private static Expression BuildRecursiveComparison(MemberInfo[] members, Expression x, Expression y, Expression comparers, Expression parentNullChecks, Expression body)
+				//now combine that with a null for OKs -- i.e. x.Property != null && y.Property != null
+				var propertiesAreBothNull = Expression.AndAlso(Expression.Equal(xPropertyOrField, nullExpression), Expression.Equal(yPropertyOrField, nullExpression));
+				var nullAllowedToThisDepth = null == parentNullChecks ? propertiesAreBothNull : Expression.AndAlso(parentNullChecks, propertiesAreBothNull);
+
+				//prefixing with the null check to this point + our custom comparison on this property
+				var completedExpression = Expression.Or(nullAllowedToThisDepth, Expression.AndAlso(nullChecktoThisDepth, customCheckToThisLevel(nullChecktoThisDepth)));
+
+				//combine the running list of recursive properties for this parent
+				return recursiveProperties == null ? completedExpression : Expression.AndAlso(recursiveProperties, completedExpression);
+			}
+
+			private static Expression BuildRecursiveComparison(MemberInfo[] members, Expression x, Expression y, ParameterExpression comparers, BinaryExpression parentNullChecks, Expression body)
 			{
 				//nothing to see here -- move on
 				if (members.Length == 0)
 					return body;
 
-				Expression propertyEqualities = null,
-					recursiveProperties = null;
+				Expression propertyEqualities = null;
+				BinaryExpression recursiveProperties = null;
 
 				for (int i = 0; i < members.Length; i++)
 				{
 					Type memberType = members[i] is PropertyInfo ? ((PropertyInfo)members[i]).PropertyType : ((FieldInfo)members[i]).FieldType;
-					Expression xPropertyOrField = Expression.PropertyOrField(x, members[i].Name),
+					MemberExpression xPropertyOrField = Expression.PropertyOrField(x, members[i].Name),
 						yPropertyOrField = Expression.PropertyOrField(y, members[i].Name);
 
 					if (memberType.IsValueType || (memberType.ImplementsItsOwnEqualsMethod() && !memberType.IsAnonymous()))
@@ -173,50 +192,18 @@ namespace EPS
 					{
 						Type genericTypeParam = (typeof(IEnumerable<>)).GetGenericInterfaceTypeParameters(memberType).First();
 
-						var nullExpression = Expression.Constant(null);
-						//x.Property != null && y.Property != null
-						var propertyNotNullCheck = Expression.AndAlso(Expression.NotEqual(xPropertyOrField, nullExpression), Expression.NotEqual(yPropertyOrField, nullExpression));
-						//combine with any parent null checking to this depth -- i.e. (x.Property != null && y.Property != null && x.Property.Property != null && y.Property.Property != null)
-						var nullChecktoThisDepth = null == parentNullChecks ? propertyNotNullCheck : Expression.AndAlso(parentNullChecks, propertyNotNullCheck);
-						var recursiveProperty =
-							//prefixing with the null check to this point
-							Expression.AndAlso(nullChecktoThisDepth,
+						recursiveProperties = CustomPropertyComparison(xPropertyOrField, yPropertyOrField, parentNullChecks, recursiveProperties, (nullCheckToThisDepth) =>
 							//and call SequenceEqual on the two sequences, passing a custom IEqualityComparer
 							SequencesOfTypeAreEqual(xPropertyOrField, yPropertyOrField, genericTypeParam, comparers));
-
-						//now combine that with a null for OKs -- i.e. x.Property != null && y.Property != null
-						var propertiesAreBothNull = Expression.AndAlso(Expression.Equal(xPropertyOrField, nullExpression), Expression.Equal(yPropertyOrField, nullExpression));
-						var nullAllowedToThisDepth = null == parentNullChecks ? propertiesAreBothNull : Expression.AndAlso(parentNullChecks, propertiesAreBothNull);
-
-						var completedExpression = Expression.Or(nullAllowedToThisDepth, recursiveProperty);
-
-						//combine the running list of recursive properties for this parent
-						recursiveProperties = recursiveProperties == null ? completedExpression : Expression.AndAlso(recursiveProperties, completedExpression);
 					}
 					// this type does not support value comparison, so we must recurse and find it's properties.
 					else
 					{
-						var nullExpression = Expression.Constant(null);
-						//x.Property != null && y.Property != null
-						var propertyNotNullCheck = Expression.AndAlso(Expression.NotEqual(xPropertyOrField, nullExpression), Expression.NotEqual(yPropertyOrField, nullExpression));
-						//combine with any parent null checking to this depth -- i.e. (x.Property != null && y.Property != null && x.Property.Property != null && y.Property.Property != null)
-						var nullChecktoThisDepth = null == parentNullChecks ? propertyNotNullCheck : Expression.AndAlso(parentNullChecks, propertyNotNullCheck);
-						var recursiveProperty =
-							//prefixing with the null check to this point
-							Expression.AndAlso(nullChecktoThisDepth,
+						recursiveProperties = CustomPropertyComparison(xPropertyOrField, yPropertyOrField, parentNullChecks, recursiveProperties, (nullCheckToThisDepth) =>
 							//and either use a passed comparer or recurse the property and all it's nested properties
 							CallExpressionIfNoComparer(
-								BuildRecursiveComparison(memberType.GetProperties(), xPropertyOrField, yPropertyOrField, comparers, nullChecktoThisDepth, recursiveProperties), 
+								BuildRecursiveComparison(memberType.GetProperties(), xPropertyOrField, yPropertyOrField, comparers, nullCheckToThisDepth, recursiveProperties),
 								comparers, memberType, xPropertyOrField, yPropertyOrField));
-
-						//now combine that with a null for OKs -- i.e. x.Property != null && y.Property != null
-						var propertiesAreBothNull = Expression.AndAlso(Expression.Equal(xPropertyOrField, nullExpression), Expression.Equal(yPropertyOrField, nullExpression));
-						var nullAllowedToThisDepth = null == parentNullChecks ? propertiesAreBothNull : Expression.AndAlso(parentNullChecks, propertiesAreBothNull);
-
-						var completedExpression = Expression.Or(nullAllowedToThisDepth, recursiveProperty);
-
-						//combine the running list of recursive properties for this parent
-						recursiveProperties = recursiveProperties == null ? completedExpression : Expression.AndAlso(recursiveProperties, completedExpression);
 					}
 				}
 
