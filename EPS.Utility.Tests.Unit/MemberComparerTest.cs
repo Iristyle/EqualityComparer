@@ -112,14 +112,31 @@ namespace EPS.Utility.Tests.Unit
 		}
 
 		[Fact]
-		public void Equal_TrueOnObjectsWithNestedObjects()
+		public void Equal_TrueOnAnonymousObjectsWithNestedObjects()
 		{
 			var sub1 = new { PropertyB = "b1" };
 			var sub2 = new { PropertyB = "b1" };
 
 			Assert.True(MemberComparer.Equal(sub1, sub2));
+		}
+
+		[Fact]
+		public void Equal_TrueOnObjectsWithNestedObjects()
+		{
+			var sub1 = new { PropertyB = "b1" };
+			var sub2 = new { PropertyB = "b1" };
+
 			Assert.True(MemberComparer.Equal(new { PropertyA = "A", Integer = 23, Sub = sub1 },
 				new { PropertyA = "A", Integer = 23, Sub = sub2 }));
+		}
+
+		[Fact]
+		public void Equal_FalseOnAnonymousObjectsWithNestedObjectsWithDifferentValues()
+		{
+			var sub1 = new { PropertyB = "b1" };
+			var sub2 = new { PropertyB = "b2" };
+
+			Assert.False(MemberComparer.Equal(sub1, sub2));
 		}
 
 		[Fact]
@@ -128,9 +145,20 @@ namespace EPS.Utility.Tests.Unit
 			var sub1 = new { PropertyB = "b1" };
 			var sub2 = new { PropertyB = "b2" };
 
-			Assert.False(MemberComparer.Equal(sub1, sub2));
 			Assert.False(MemberComparer.Equal(new { PropertyA = "A", Integer = 23, Sub = sub1 },
 				new { PropertyA = "A", Integer = 23, Sub = sub2 }));
+		}
+
+		[Fact]
+		public void Equal_TrueOnNullAnonymousObjects()
+		{
+			//anonymous types that look the same like these actually share a static type (as constructed by the compiler)
+			var sub1 = new { PropertyB = "b1" };
+			sub1 = null;
+			var sub2 = new { PropertyB = "b1" };
+			sub2 = null;
+
+			Assert.True(MemberComparer.Equal(sub1, sub2));
 		}
 
 		[Fact]
@@ -142,7 +170,6 @@ namespace EPS.Utility.Tests.Unit
 			var sub2 = new { PropertyB = "b1" };
 			sub2 = null;
 
-			Assert.True(MemberComparer.Equal(sub1, sub2));
 			Assert.True(MemberComparer.Equal(new { PropertyA = "A", Integer = 23, Sub = sub1 },
 				new { PropertyA = "A", Integer = 23, Sub = sub2 }));
 		}
@@ -155,7 +182,6 @@ namespace EPS.Utility.Tests.Unit
 			var sub2 = new { PropertyB = "b2" };
 			sub2 = null;
 
-			Assert.True(MemberComparer.Equal(sub1, sub2));
 			Assert.False(MemberComparer.Equal(new { PropertyA = "A", Integer = 24, Sub = sub1 },
 				new { PropertyA = "A", Integer = 23, Sub = sub2 }));
 		}
@@ -167,7 +193,6 @@ namespace EPS.Utility.Tests.Unit
 			var sub2 = new { PropertyB = "b2" };
 			sub2 = null;
 
-			Assert.False(MemberComparer.Equal(sub1, sub2));
 			Assert.False(MemberComparer.Equal(new { PropertyA = "A", Integer = 23, Sub = sub1 },
 				new { PropertyA = "A", Integer = 23, Sub = sub2 }));
 		}
