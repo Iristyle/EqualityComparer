@@ -331,5 +331,20 @@ namespace EPS.Utility.Tests.Unit
 			var dates = new [] { DateTime.Parse("07:27:15.01"), DateTime.Parse("07:27:15.49") };
 			Assert.True(MemberComparer.Equal(new { A = 1, Dates = dates }, new { A = 1, Dates = dates }, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
 		}
+
+		class ClassWithStatics
+		{
+			public static int StaticInteger { get { return 12; } }
+			public string Value { get; set; }
+		}
+
+		[Fact]
+		public void Equal_IgnoresStatics()
+		{
+			var a = new ClassWithStatics() { Value = "Foo" };
+			var b = new ClassWithStatics() { Value = "Foo" };
+
+			Assert.True(MemberComparer.Equal(a, b));
+		}
 	}
 }

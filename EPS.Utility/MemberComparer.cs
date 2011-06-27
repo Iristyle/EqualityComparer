@@ -112,7 +112,7 @@ namespace EPS
 					return;
 				};
 
-				var members = t.GetProperties().OfType<MemberInfo>().Union(t.GetFields()).ToArray();
+				var members = t.GetProperties(BindingFlags.Public | BindingFlags.Instance).OfType<MemberInfo>().Union(t.GetFields(BindingFlags.Public | BindingFlags.Instance)).ToArray();
 				if (members.Length == 0) { return; }
 
 				Expression body = CallExpressionIfNoComparer(BuildRecursiveComparison(members, x, y, customComparers, null, null),
@@ -202,7 +202,8 @@ namespace EPS
 						recursiveProperties = CustomPropertyComparison(xPropertyOrField, yPropertyOrField, parentNullChecks, recursiveProperties, (nullCheckToThisDepth) =>
 							//and either use a passed comparer or recurse the property and all it's nested properties
 							CallExpressionIfNoComparer(
-								BuildRecursiveComparison(memberType.GetProperties(), xPropertyOrField, yPropertyOrField, comparers, nullCheckToThisDepth, recursiveProperties),
+								BuildRecursiveComparison(memberType.GetProperties(BindingFlags.Public | BindingFlags.Instance).OfType<MemberInfo>().Union(memberType.GetFields(BindingFlags.Public | BindingFlags.Instance)).ToArray(), 
+									xPropertyOrField, yPropertyOrField, comparers, nullCheckToThisDepth, recursiveProperties),
 								comparers, memberType, xPropertyOrField, yPropertyOrField));
 					}
 				}
