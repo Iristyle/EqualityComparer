@@ -12,12 +12,16 @@ namespace EPS.Utility
 		private readonly Func<T, T, bool> _comparer;
 		private readonly Func<T, int> _hasher;
 
-		/// <summary>   Constructor accepting the comparison function. </summary>
-		/// <remarks>   Uses a hasher function that always returns 0 for given instances.  Don't use this for any sorting operations. </remarks>
-		/// <exception cref="ArgumentNullException">    Thrown when the comparer or hashers are null. </exception>
-		/// <param name="comparer">   The comparison function to use when comparing the two instances. </param>
+		/// <summary>	Constructor accepting the comparison function. </summary>
+		/// <remarks>
+		/// Uses a hasher function that always returns the default GetHashCode implementation for given instances.  Don't use this for any
+		/// sorting operations.
+		/// </remarks>
+		/// <param name="comparer">	The comparison function to use when comparing the two instances. </param>
+		///
+		/// <exception cref="ArgumentNullException">	Thrown when the comparer or hashers are null. </exception>
 		public GenericEqualityComparer(Func<T, T, bool> comparer) :
-			this(comparer, o => 0)
+			this(comparer, o => o.GetHashCode())
 		{ }
 
 		/// <summary>   Constructor accepting the comparison function and hashing function. </summary>
@@ -46,10 +50,13 @@ namespace EPS.Utility
 			return this._comparer(x, y);
 		}
 
-		/// <summary>   Calculates the hash code for this object. </summary>
-		/// <remarks>   If no hasher function was supplied, will always return 0.  Otherwise uses Func{T, int} hasher function supplied. </remarks>
-		/// <param name="obj">  The object. </param>
-		/// <returns>   The hash code for this object. </returns>
+		/// <summary>	Calculates the hash code for this object. </summary>
+		/// <remarks>
+		/// If no hasher function was supplied, will always return the default GetHashCode implementation.  Otherwise uses Func{T, int} hasher
+		/// function supplied.
+		/// </remarks>
+		/// <param name="obj">	The object. </param>
+		/// <returns>	The hash code for this object. </returns>
 		public override int GetHashCode(T obj)
 		{
 			return this._hasher(obj);
