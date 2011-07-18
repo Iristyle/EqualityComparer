@@ -91,6 +91,14 @@ namespace EPS
 						StringComparer.Ordinal.Equals(stringX, stringY);
 					return;
 				}
+				//for now, do a ref check, since Exception is a bit of an oddball type
+				else if (typeof(Exception).IsAssignableFrom(t))
+				{
+					Compare = (exceptionX, exceptionY, comparers) => comparers.ContainsKey(t) ?
+						comparers[t].Equals(exceptionX, exceptionY) :
+						object.ReferenceEquals(exceptionX, exceptionY);
+					return;
+				}
 				else if (t.IsValueType || t.IsPrimitive)
 				{
 					Compare = (valueX, valueY, comparers) => comparers.ContainsKey(t) ?
@@ -185,6 +193,16 @@ namespace EPS
 						var propEqual = CallExpressionIfNoComparer(Expression.Equal(xPropertyOrField, yPropertyOrField), comparers, memberType, xPropertyOrField, yPropertyOrField);
 						
 						// this type supports value comparison so we can just compare it.       
+						propertyEqualities = propertyEqualities == null ? propEqual : Expression.AndAlso(propertyEqualities, propEqual);
+						//i.e. (x.Property == y.Property) && (x.Property2 == y.Property2) .... 
+					}
+					//for now, do a ref check, since Exception is a bit of an oddball type
+					else if (typeof(Exception).IsAssignableFrom(memberType))
+					{
+						//the refs are the same OR
+						var propEqual = CallExpressionIfNoComparer(Expression.ReferenceEqual(xPropertyOrField, yPropertyOrField),
+							comparers, memberType, xPropertyOrField, yPropertyOrField);
+
 						propertyEqualities = propertyEqualities == null ? propEqual : Expression.AndAlso(propertyEqualities, propEqual);
 						//i.e. (x.Property == y.Property) && (x.Property2 == y.Property2) .... 
 					}

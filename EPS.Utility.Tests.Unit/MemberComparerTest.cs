@@ -346,5 +346,35 @@ namespace EPS.Utility.Tests.Unit
 
 			Assert.True(MemberComparer.Equal(a, b));
 		}
+
+		[Fact]
+		public void Equal_TrueOnRefToSameException()
+		{
+			var exception = new ArgumentNullException("foo");
+
+			Assert.True(MemberComparer.Equal(exception, exception));
+		}
+
+		class ExceptionHolder
+		{
+			public Exception Exception { get; set; }
+		}
+
+		[Fact]
+		public void Equal_TrueOnNestedRefToSameException()
+		{
+			var exception = new ArgumentNullException("foo");
+
+			Assert.True(MemberComparer.Equal(new ExceptionHolder() { Exception = exception }, new ExceptionHolder() { Exception = exception }));
+		}
+
+		[Fact(Skip="This will require quite a bit of effort to get right, so punted for now")]
+		public void Equal_TrueOnExceptionsWithinSameScopeOfSameType()
+		{
+			var exception = new ArgumentNullException("foo");
+			var exception2 = new ArgumentNullException("foo");
+
+			Assert.True(MemberComparer.Equal(exception, exception2));
+		}
 	}
 }
