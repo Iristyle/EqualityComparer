@@ -132,7 +132,7 @@ namespace EPS
 				return BinaryExpression.AndAlso(
 					Expression.Call(comparers, "ContainsKey", null, Expression.Constant(memberType)),
 					Expression.Call(Expression.TypeAs(
-						Expression.MakeIndex(comparers, typeof(IDictionary<Type, IEqualityComparer>).GetProperty("Item", new [] { typeof(Type) }), new [] { Expression.Constant(memberType)}), 
+						Expression.MakeIndex(comparers, typeof(IDictionary<Type, IEqualityComparer>).GetProperty("Item", typeof(IEqualityComparer), new [] { typeof(Type) }), new [] { Expression.Constant(memberType)}), 
 						typeof(IEqualityComparer<>).MakeGenericType(memberType)), "Equals", null, xPropertyOrField, yPropertyOrField));
 			}
 
