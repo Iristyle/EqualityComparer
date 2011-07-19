@@ -35,6 +35,7 @@
     <Compile Include="Conversions\FileSizeFormatterTest.cs" />
     <Compile Include="Conversions\StringConversionsTest.cs" />
     <Compile Include="DateComparerTest.cs" />
+    <Compile Include="DateTimeExtensionsTest.cs" />
     <Compile Include="Diagnostics\DebugTextWriterTest.cs" />
     <Compile Include="Diagnostics\LogHelperTest.cs" />
     <Compile Include="Dynamic\ObjectExtensionsTest.cs" />

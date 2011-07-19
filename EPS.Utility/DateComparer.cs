@@ -38,7 +38,7 @@ namespace EPS
 			switch (comparisonType)
 			{
 				case DateComparisonType.TruncatedToSecond:
-					return TruncateToSecond(x).Equals(TruncateToSecond(y));
+					return x.TruncateToSecond().Equals(y.TruncateToSecond());
 				case DateComparisonType.Exact:
 				default:
 					return x.Equals(y);
@@ -54,16 +54,12 @@ namespace EPS
 			switch (comparisonType)
 			{
 				case DateComparisonType.TruncatedToSecond:
-					return TruncateToSecond(obj).GetHashCode();
+					return obj.TruncateToSecond().GetHashCode();
 				case DateComparisonType.Exact:
 				default:
 					return obj.GetHashCode();
 			}			
 		}
-
-		private DateTime TruncateToSecond(DateTime value)
-		{
-			return new DateTime((value.Ticks / TimeSpan.TicksPerSecond) * TimeSpan.TicksPerSecond);
-		}
+		
 	}
 }

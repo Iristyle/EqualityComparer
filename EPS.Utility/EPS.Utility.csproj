@@ -40,6 +40,7 @@
     <Compile Include="Conversions\StringConversions.cs" />
     <Compile Include="DateComparer.cs" />
     <Compile Include="DateComparisonType.cs" />
+    <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="Diagnostics\DebugTextWriter.cs" />
     <Compile Include="Diagnostics\LogMethodAttribute.cs" />
     <Compile Include="Diagnostics\LogHelper.cs" />
