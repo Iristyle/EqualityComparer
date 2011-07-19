@@ -138,9 +138,9 @@ namespace EPS
 			{
 				//(comparers.ContainsKey(memberType) && ((IEqualityComparer<memberType>)comparers[memberType]).Equals(x, y))
 				return BinaryExpression.AndAlso(
-					Expression.Call(comparers, "ContainsKey", null, Expression.Constant(memberType)),
+					Expression.Call(comparers, "ContainsKey", null, Expression.Constant(memberType, typeof(Type))),
 					Expression.Call(Expression.TypeAs(
-						Expression.MakeIndex(comparers, typeof(IDictionary<Type, IEqualityComparer>).GetProperty("Item", typeof(IEqualityComparer), new [] { typeof(Type) }), new [] { Expression.Constant(memberType)}), 
+						Expression.MakeIndex(comparers, typeof(IDictionary<Type, IEqualityComparer>).GetProperty("Item", typeof(IEqualityComparer), new[] { typeof(Type) }), new[] { Expression.Constant(memberType, typeof(Type)) }), 
 						typeof(IEqualityComparer<>).MakeGenericType(memberType)), "Equals", null, xPropertyOrField, yPropertyOrField));
 			}
 
@@ -149,14 +149,14 @@ namespace EPS
 				return BinaryExpression.Or(
 					CallComparerIfAvailable(comparers, memberType, xPropertyOrField, yPropertyOrField),
 						Expression.AndAlso(
-							Expression.IsFalse(Expression.Call(comparers, "ContainsKey", null, Expression.Constant(memberType))),
+							Expression.IsFalse(Expression.Call(comparers, "ContainsKey", null, Expression.Constant(memberType, typeof(Type)))),
 							comparison));				
 			}
 
 			private static BinaryExpression CustomPropertyComparison(MemberExpression xPropertyOrField, MemberExpression yPropertyOrField, BinaryExpression parentNullChecks, BinaryExpression recursiveProperties,
 				Func<BinaryExpression, Expression> customCheckToThisLevel)
 			{
-				var nullExpression = Expression.Constant(null);
+				var nullExpression = Expression.Constant(null, typeof(object));
 				//x.Property != null && y.Property != null
 				var propertyNotNullCheck = Expression.AndAlso(Expression.NotEqual(xPropertyOrField, nullExpression), Expression.NotEqual(yPropertyOrField, nullExpression));
 				//combine with any parent null checking to this depth -- i.e. (x.Property != null && y.Property != null && x.Property.Property != null && y.Property.Property != null)
