@@ -408,5 +408,22 @@ namespace EPS.Utility.Tests.Unit
 		{
 			Assert.True(MemberComparer.Equal<IBar>(new Bar() { Foo = new Foo() { Integer = 5 }}, new Bar() { Foo = new Foo() { Integer = 5 }}));
 		}
+
+		class A
+		{
+			public int Integer { get; set; }
+		}
+
+		class B : A
+		{
+			public string String { get; set; }
+		}
+
+		[Fact]
+		public void Equal_ScopesComparisonToSpecifiedType()
+		{
+			Assert.True(MemberComparer.Equal<A>(new B() { Integer = 4, String = "Foo" }, new B() { Integer = 4, String = "Bar" }));
+
+		}
 	}
 }
