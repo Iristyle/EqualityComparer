@@ -376,5 +376,37 @@ namespace EPS.Utility.Tests.Unit
 
 			Assert.True(MemberComparer.Equal(exception, exception2));
 		}
+
+		interface IFoo
+		{
+			int Integer { get; }
+		}
+
+		class Foo : IFoo
+		{
+			public int Integer { get; set; }
+		}
+
+		[Fact]
+		public void Equal_TrueOnInterfaces()
+		{
+			Assert.True(MemberComparer.Equal<IFoo>(new Foo() { Integer = 5 }, new Foo() { Integer = 5 }));
+		}
+
+		interface IBar
+		{
+			IFoo Foo { get; }
+		}
+
+		class Bar : IBar
+		{
+			public IFoo Foo { get; set; }
+		}
+
+		[Fact]
+		public void Equal_TrueOnNestedInterfaces()
+		{
+			Assert.True(MemberComparer.Equal<IBar>(new Bar() { Foo = new Foo() { Integer = 5 }}, new Bar() { Foo = new Foo() { Integer = 5 }}));
+		}
 	}
 }

@@ -71,7 +71,7 @@ namespace EPS
 		static bool ImplementsItsOwnEqualsMethod(this Type type)
 		{
 			var equalsMethod = type.GetMethod("Equals", new Type[] { type });
-			return (equalsMethod.DeclaringType == type);
+			return (null != equalsMethod && equalsMethod.DeclaringType == type);
 		}		
 
 		static class Cache<T>
