@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("EPS.Utility")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Various utility classes")]
 [assembly: AssemblyProduct("EPS.Utility")]
 [assembly: AssemblyCulture("")]
 
