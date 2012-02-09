@@ -103,6 +103,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="EPS.Utility.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="..\Build\Shared.targets" />
