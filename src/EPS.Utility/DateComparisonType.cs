@@ -1,6 +1,6 @@
 using System;
 
-namespace EPS
+namespace EqualityComparer
 {
 	/// <summary>	Defines how to compare dates when using DateComaper{T}. </summary>
 	/// <remarks>	ebrown, 6/18/2011. </remarks>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 
-namespace EPS.Reflection
+namespace EqualityComparer.Reflection
 {
     /// <summary>   This is a *very* rudimentary comparison routine that examines two ParameterInfo definitions for signature compatibility. </summary>
     /// <remarks>   ebrown, 2/3/2011. </remarks>

@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EPS.Utility")]
-[assembly: AssemblyDescription("Various utility classes")]
-[assembly: AssemblyProduct("EPS.Utility")]
+[assembly: AssemblyTitle("EqualityComparer")]
+[assembly: AssemblyDescription("A set of Expression tree based object instance comparers")]
+[assembly: AssemblyProduct("EqualityComparer")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -18,19 +18,5 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("34a5780f-8fc9-49d4-90c4-67d866e3c693")]
 
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Collections", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Conversions", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Diagnostics", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Dynamic", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.IO", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Linq", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Linq.Expressions", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Net", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Reflection", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Reflection.Emit", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Runtime.Serialization.Json", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Security", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Security.Cryptography", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Threading", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EPS.Windows.Security", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]
+[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EqualityComparer", Scope = "namespace", Justification = "Simple library!")]
+[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Target = "EqualityComparer.Reflection", Scope = "namespace", Justification = "Helpers mirror .NET framework type layout")]

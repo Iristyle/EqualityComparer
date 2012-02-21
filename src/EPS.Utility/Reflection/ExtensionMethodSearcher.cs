@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 //TODO: seriously consider doing some caching here so that we're not constantly performing reflection
-namespace EPS.Reflection
+namespace EqualityComparer.Reflection
 {
     /// <summary>
     /// Provides a way to find all extensions methods in assemblies, extension methods for a given type, or

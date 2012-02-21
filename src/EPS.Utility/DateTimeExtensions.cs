@@ -1,6 +1,6 @@
 using System;
 
-namespace EPS
+namespace EqualityComparer
 {
 	/// <summary>	Date time extensions.  </summary>
 	/// <remarks>	7/19/2011. </remarks>

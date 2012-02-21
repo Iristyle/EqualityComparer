@@ -5,10 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using EPS.Reflection;
-using EPS.Utility;
+using EqualityComparer.Reflection;
 
-namespace EPS
+namespace EqualityComparer
 {
 	/// <summary>   A class that performs a public property by property and field by field comparison of two object instances.  Useful for testing. </summary>
 	/// <remarks>   http://stackoverflow.com/questions/986572/hows-to-quick-check-if-data-transfer-two-objects-have-equal-properties-in-c </remarks>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Xunit;
 using Xunit.Extensions;
 
-namespace EPS.Utility.Tests.Unit
+namespace EqualityComparer.Tests
 {
 	public class DateTimeExtensionsTest
 	{

@@ -4,7 +4,7 @@ using System.Linq;
 using Xunit;
 using Xunit.Extensions;
 
-namespace EPS.Utility.Tests.Unit
+namespace EqualityComparer.Tests
 {
 	public class DateComparerTest
 	{

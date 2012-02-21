@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace EPS.Reflection
+namespace EqualityComparer.Reflection
 {
     /// <summary>   A rudimentary comparison routine that Member information comparer. </summary>
     /// <remarks>   ebrown, 2/3/2011. </remarks>

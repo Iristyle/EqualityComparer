@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EPS.Utility
+namespace EqualityComparer
 {
 	/// <summary>   A generic comparer that takes accepts a Func{T, T, bool} to create simple on-the-fly comparison routines. </summary>
 	/// <remarks>   ebrown, 2/7/2011. </remarks>

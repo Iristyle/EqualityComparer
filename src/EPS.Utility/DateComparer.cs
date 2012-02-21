@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EPS
+namespace EqualityComparer
 {
 	/// <summary>	An EqualityComparer implementation for DateTimes that can use a configurable comparison algorithm, 
 	/// 			such as comparing exactly and comparing to the second. </summary>

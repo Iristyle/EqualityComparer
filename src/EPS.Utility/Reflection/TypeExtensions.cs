@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace EPS.Reflection
+namespace EqualityComparer.Reflection
 {
     /// <summary>   A set of useful extension methods built on top of <see cref="T:System.Type"/> </summary>
     /// <remarks>   ebrown, 11/9/2010. </remarks>

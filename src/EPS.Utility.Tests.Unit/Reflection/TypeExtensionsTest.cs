@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace EPS.Reflection.Tests.Unit
+namespace EqualityComparer.Reflection.Tests
 {
     public class TypeExtensionsTest
     {

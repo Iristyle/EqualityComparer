@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 
-namespace EPS.Reflection
+namespace EqualityComparer.Reflection
 {
     /// <summary>   A rudimentary FieldInfo comparer that checks for equivalency. </summary>
     /// <remarks>   ebrown, 2/3/2011. </remarks>

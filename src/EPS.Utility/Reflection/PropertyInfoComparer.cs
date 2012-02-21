@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 
-namespace EPS.Reflection
+namespace EqualityComparer.Reflection
 {
     /// <summary>   A class that performs a rudimentary comparison of PropertyInfo instances. </summary>
     /// <remarks>   ebrown, 2/3/2011. </remarks>

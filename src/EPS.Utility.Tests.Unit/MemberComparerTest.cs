@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Xunit;
 
-namespace EPS.Utility.Tests.Unit
+namespace EqualityComparer.Tests
 {
 	public class MemberComparerTest
 	{

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace EPS.Reflection
+namespace EqualityComparer.Reflection
 {
     /// <summary>   This is a *very* rudimentary comparison routine that examines two ConstructorInfo definitions for signature compatibility. </summary>
     /// <remarks>   ebrown, 2/3/2011. </remarks>

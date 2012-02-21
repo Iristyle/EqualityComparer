@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
-namespace EPS.Utility.Tests.Unit
+namespace EqualityComparer.Tests
 {
 	public class GenericEqualityComparerTest
 	{

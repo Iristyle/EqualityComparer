@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 
-namespace EPS.Reflection
+namespace EqualityComparer.Reflection
 {
     /// <summary>   Event information comparer. </summary>
     /// <remarks>   ebrown, 2/3/2011. </remarks>

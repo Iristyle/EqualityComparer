@@ -3,8 +3,8 @@
   <PropertyGroup>
     <ProjectGuid>{7E944761-20F9-48F3-8644-042AACBFD385}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>EPS.Utility.Tests.Unit</RootNamespace>
-    <AssemblyName>EPS.Utility.Tests.Unit</AssemblyName>
+    <RootNamespace>EqualityComparer.Tests</RootNamespace>
+    <AssemblyName>EqualityComparer.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\src\</SolutionDir>
@@ -22,6 +22,7 @@
     -->
     <Ruleset>EPS.Test</Ruleset>
     <NoWarn>3016</NoWarn>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath Condition="$(OutputPath) == ''">bin\Debug</OutputPath>
@@ -76,9 +77,9 @@
     <Compile Include="Reflection\TypeExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EPS.Utility\EPS.Utility.csproj">
+    <ProjectReference Include="..\EPS.Utility\EqualityComparer.csproj">
       <Project>{10D51FFF-4F91-4917-82EA-B7426B2652F6}</Project>
-      <Name>EPS.Utility</Name>
+      <Name>EqualityComparer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
