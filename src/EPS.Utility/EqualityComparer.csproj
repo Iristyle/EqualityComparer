@@ -72,7 +72,6 @@
     <Compile Include="Reflection\FieldInfoComparer.cs" />
     <Compile Include="Reflection\MemberInfoComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reflection\ExtensionMethodSearcher.cs" />
     <Compile Include="Reflection\MethodInfoComparer.cs" />
     <Compile Include="Reflection\ParameterInfoComparer.cs" />
     <Compile Include="Reflection\PropertyInfoComparer.cs" />
