@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Ethan Brown</authors>
+    <owners>$author$</owners>
+    <summary>Opensource .NET helpers for easily comparing objects by their property / member values</summary>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial release</releaseNotes>
+    <projectUrl>https://github.com/EastPoint/EqualityComparer</projectUrl>
+    <licenseUrl>https://github.com/EastPoint/EqualityComparer/blob/master/LICENSE.md</licenseUrl>
+    <tags>equality comparer expression reflection</tags>
+    <language>en-US</language>
+    <copyright>East Point Systems 2012 and contributors</copyright>
+  </metadata>
+</package>
