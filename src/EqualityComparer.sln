@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EqualityComparer", "EPS.Utility\EqualityComparer.csproj", "{10D51FFF-4F91-4917-82EA-B7426B2652F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EqualityComparer", "EqualityComparer\EqualityComparer.csproj", "{10D51FFF-4F91-4917-82EA-B7426B2652F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EqualityComparer.Tests", "EPS.Utility.Tests.Unit\EqualityComparer.Tests.csproj", "{7E944761-20F9-48F3-8644-042AACBFD385}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EqualityComparer.Tests", "EqualityComparer.Tests\EqualityComparer.Tests.csproj", "{7E944761-20F9-48F3-8644-042AACBFD385}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
