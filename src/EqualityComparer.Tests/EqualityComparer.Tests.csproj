@@ -46,11 +46,6 @@
   </PropertyGroup>
   <!--
   <ItemGroup>
-    <Compile Include="..\Build\SharedAssemblyVersioning.cs">
-      <Link>Properties\SharedAssemblyVersioning.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <CodeAnalysisDictionary Include="..\Build\CustomDictionary.xml">
       <Link>Properties\CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>
@@ -76,7 +71,7 @@
     <Compile Include="Reflection\TypeExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EPS.Utility\EqualityComparer.csproj">
+    <ProjectReference Include="..\EqualityComparer\EqualityComparer.csproj">
       <Project>{10D51FFF-4F91-4917-82EA-B7426B2652F6}</Project>
       <Name>EqualityComparer</Name>
     </ProjectReference>
