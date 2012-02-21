@@ -58,8 +58,8 @@ namespace EqualityComparer
 				case DateComparisonType.Exact:
 				default:
 					return obj.GetHashCode();
-			}			
+			}
 		}
-		
+
 	}
 }

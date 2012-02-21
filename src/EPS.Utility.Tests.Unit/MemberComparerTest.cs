@@ -255,18 +255,18 @@ namespace EqualityComparer.Tests
 		{
 			string Bar = "bar";
 			Assert.True(MemberComparer.Equal(new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }, new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar },
-				 new [] { new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) })); 
+				 new[] { new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) }));
 		}
 
 		[Fact]
 		public void Equal_TrueOnClassWithMismatchedPropertiesAndFieldsWithCustomComparerNested()
 		{
 			string Bar = "bar";
-			Assert.True(MemberComparer.Equal(new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }}, 
-				new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar }},
-				new [] { new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) }));
+			Assert.True(MemberComparer.Equal(new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar } },
+				new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar } },
+				new[] { new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) }));
 		}
-		
+
 		[Fact]
 		public void Equal_TrueOnClasswithPropertiesAndFields()
 		{
@@ -292,7 +292,7 @@ namespace EqualityComparer.Tests
 		public void Equal_TrueToSecondOnEqualDates()
 		{
 			DateTime now = DateTime.Now;
-			Assert.True(MemberComparer.Equal(now, now, new [] { new DateComparer(DateComparisonType.TruncatedToSecond) } ));
+			Assert.True(MemberComparer.Equal(now, now, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
 		}
 
 		[Fact]
@@ -303,7 +303,7 @@ namespace EqualityComparer.Tests
 
 			Assert.False(MemberComparer.Equal(one, two));
 		}
-		
+
 		[Fact]
 		public void Equal_TrueToSecondOnDatesDifferingByLessThanASecondWithCustomComparer()
 		{
@@ -328,7 +328,7 @@ namespace EqualityComparer.Tests
 		[Fact]
 		public void Equal_TrueToSecondOnNestedCollectionOfDatesDifferingByLessThanASecondWithCustomComparer()
 		{
-			var dates = new [] { DateTime.Parse("07:27:15.01"), DateTime.Parse("07:27:15.49") };
+			var dates = new[] { DateTime.Parse("07:27:15.01"), DateTime.Parse("07:27:15.49") };
 			Assert.True(MemberComparer.Equal(new { A = 1, Dates = dates }, new { A = 1, Dates = dates }, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
 		}
 
@@ -368,7 +368,7 @@ namespace EqualityComparer.Tests
 			Assert.True(MemberComparer.Equal(new ExceptionHolder() { Exception = exception }, new ExceptionHolder() { Exception = exception }));
 		}
 
-		[Fact(Skip="This will require quite a bit of effort to get right, so punted for now")]
+		[Fact(Skip = "This will require quite a bit of effort to get right, so punted for now")]
 		public void Equal_TrueOnExceptionsWithinSameScopeOfSameType()
 		{
 			var exception = new ArgumentNullException("foo");
@@ -406,7 +406,7 @@ namespace EqualityComparer.Tests
 		[Fact]
 		public void Equal_TrueOnNestedInterfaces()
 		{
-			Assert.True(MemberComparer.Equal<IBar>(new Bar() { Foo = new Foo() { Integer = 5 }}, new Bar() { Foo = new Foo() { Integer = 5 }}));
+			Assert.True(MemberComparer.Equal<IBar>(new Bar() { Foo = new Foo() { Integer = 5 } }, new Bar() { Foo = new Foo() { Integer = 5 } }));
 		}
 
 		class A

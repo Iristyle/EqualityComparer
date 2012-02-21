@@ -14,9 +14,9 @@ namespace EqualityComparer.Tests
 		{
 			get
 			{
-				yield return new object [] { wellKnownDate, wellKnownDate };
-				yield return new object [] { wellKnownDate, wellKnownDate.AddMilliseconds(100) };
-				yield return new object [] { wellKnownDate, wellKnownDate.AddMilliseconds(799) };
+				yield return new object[] { wellKnownDate, wellKnownDate };
+				yield return new object[] { wellKnownDate, wellKnownDate.AddMilliseconds(100) };
+				yield return new object[] { wellKnownDate, wellKnownDate.AddMilliseconds(799) };
 			}
 		}
 
