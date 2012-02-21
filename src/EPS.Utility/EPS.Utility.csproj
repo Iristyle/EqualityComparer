@@ -9,110 +9,87 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\src\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <WarningLevel>4</WarningLevel>
+    <ErrorReport>prompt</ErrorReport>
+    <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <!--
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\..\tools\FxCopRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleDirectories>$(FxCopRulesPath)</CodeAnalysisRuleDirectories>
+    -->
+    <Ruleset>EPS</Ruleset>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath Condition="$(OutputPath) == ''">bin\Debug</OutputPath>
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath Condition="$(OutputPath) == ''">bin\Release</OutputPath>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).XML</DocumentationFile>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Analysis|AnyCPU' ">
+    <OutputPath Condition="$(OutputPath) == ''">bin\Analysis</OutputPath>
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <RunCodeAnalysis>$(BuildingInsideVisualStudio)</RunCodeAnalysis>
+  </PropertyGroup>
+  <!--
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Common.Logging">
-      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Compile Include="..\Build\SharedAssemblyVersioning.cs">
+      <Link>Properties\SharedAssemblyVersioning.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collections\EnumeratorExtensions.cs" />
-    <Compile Include="Collections\Generic\DictionaryExtensions.cs" />
-    <Compile Include="Collections\Generic\EnumeratorExtensions.cs" />
-    <Compile Include="Collections\Generic\EnumeratorConverter.cs" />
-    <Compile Include="Collections\Generic\ListExtensions.cs" />
-    <Compile Include="Collections\NaturalSortComparer.cs" />
-    <Compile Include="Configuration\Abstractions\ConfigurationManagerWrapper.cs" />
-    <Compile Include="Configuration\Abstractions\ConnectionStringSettingsWrapper.cs" />
-    <Compile Include="Configuration\Abstractions\IConfigurationManager.cs" />
-    <Compile Include="Configuration\Abstractions\IConfigurationSectionGroup.cs" />
-    <Compile Include="Configuration\Abstractions\IConnectionStringSettings.cs" />
-    <Compile Include="Configuration\ConfigurationElementDictionary.cs" />
-    <Compile Include="Configuration\EnumConverter.cs" />
-    <Compile Include="Conversions\FileSizeFormatter.cs" />
-    <Compile Include="Conversions\SafeConvert.cs" />
-    <Compile Include="Conversions\StringConversions.cs" />
+    <CodeAnalysisDictionary Include="..\Build\CustomDictionary.xml">
+      <Link>Properties\CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  -->
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="DateComparer.cs" />
     <Compile Include="DateComparisonType.cs" />
     <Compile Include="DateTimeExtensions.cs" />
-    <Compile Include="Diagnostics\DebugTextWriter.cs" />
-    <Compile Include="Diagnostics\LogMethodAttribute.cs" />
-    <Compile Include="Diagnostics\LogHelper.cs" />
-    <Compile Include="Dynamic\ObjectExtensions.cs" />
-    <Compile Include="EnumExtensions.cs" />
-    <Compile Include="EventHandlerExtensions.cs" />
-    <Compile Include="IO\StreamExtensions.cs" />
     <Compile Include="GenericEqualityComparer.cs" />
-    <Compile Include="Linq\Expressions\ExpressionExtensions.cs" />
-    <Compile Include="Linq\Expressions\ExpressionVisitor.cs" />
-    <Compile Include="Linq\Expressions\ExpressionVisitorBase.cs" />
-    <Compile Include="Linq\Extensions.cs" />
-    <Compile Include="Linq\QueryableExtensions.cs" />
-    <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="MemberComparer.cs" />
     <Compile Include="Reflection\ConstructorInfoComparer.cs" />
     <Compile Include="Reflection\EventInfoComparer.cs" />
     <Compile Include="Reflection\FieldInfoComparer.cs" />
     <Compile Include="Reflection\MemberInfoComparer.cs" />
-    <Compile Include="Reflection\Emit\RuntimeTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reflection\Emit\TypeBuilderExtensions.cs" />
     <Compile Include="Reflection\ExtensionMethodSearcher.cs" />
     <Compile Include="Reflection\MethodInfoComparer.cs" />
     <Compile Include="Reflection\ParameterInfoComparer.cs" />
     <Compile Include="Reflection\PropertyInfoComparer.cs" />
     <Compile Include="Reflection\TypeExtensions.cs" />
-    <Compile Include="Runtime\Serialization\Json\JsonExtensions.cs" />
-    <Compile Include="Runtime\Serialization\Json\ObjectExtensions.cs" />
-    <Compile Include="Security\Cryptography\HashHelpers.cs" />
-    <Compile Include="Security\LogHelpers.cs" />
-    <Compile Include="StringExtensions.cs" />
-    <Compile Include="Testing\CompareObjects.cs" />
-    <Compile Include="Testing\ComparisonHelper.cs" />
-    <Compile Include="Testing\ComparisonResult.cs" />
-    <Compile Include="Text\GuidHelper.cs" />
-    <Compile Include="Text\Patterns.cs" />
-    <Compile Include="Text\SubstringMatchedString.cs" />
-    <Compile Include="Text\SubstringMatchListStringComparer.cs" />
-    <Compile Include="Text\WordbreakRegexComparer.cs" />
-    <Compile Include="Text\WordbreakStringComparer.cs" />
-    <Compile Include="Threading\ThreadPool.cs" />
-    <Compile Include="UriExtensions.cs" />
-    <Compile Include="Windows\Security\WindowsIdentityExtensions.cs" />
-    <Compile Include="Windows\Security\WindowsPrincipalExtensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Runtime\Caching\Configuration\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EPS.Annotations\EPS.Annotations.csproj">
-      <Project>{ACAF7C74-B396-4768-A3B4-F4479C884FFC}</Project>
-      <Name>EPS.Annotations</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="EPS.Utility.nuspec" />
-    <None Include="packages.config" />
-  </ItemGroup>
+  <!--
   <Import Project="..\Build\Shared.targets" />
+  -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!--
   <Import Project="..\Build\SharedPostBuild.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  -->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
+  <UsingTask TaskName="PepitaGet.RestorePackagesTask" AssemblyFile="$(SolutionDir)..\Tools\PepitaGet.dll" />
   <Target Name="BeforeBuild">
+    <PepitaGet.RestorePackagesTask />
   </Target>
   <Target Name="AfterBuild">
   </Target>
