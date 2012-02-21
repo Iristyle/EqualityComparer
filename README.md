@@ -18,6 +18,7 @@ This variant is a little more general purpose with a few more features, and is d
 There are plenty of examples in the Tests project.  Look there for more details.
 
 Should work properly with:
+
 * Nested types
 * Anonymous types
 * Custom hand-rolled comparers (derived from IEqualityComparer or using the included Func<T,T> based GenericEqualityComparer)
