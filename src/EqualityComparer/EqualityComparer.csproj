@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{10D51FFF-4F91-4917-82EA-B7426B2652F6}</ProjectGuid>
@@ -72,18 +72,20 @@
     <Compile Include="Reflection\PropertyInfoComparer.cs" />
     <Compile Include="Reflection\TypeExtensions.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--
   <Import Project="..\Build\SharedPostBuild.targets" />
   -->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.   
-       Other similar extension points exist, see Microsoft.Common.targets.
+       Other similar extension points exist, see Microsoft.Common.targets. -->
   <UsingTask TaskName="PepitaGet.RestorePackagesTask" AssemblyFile="$(SolutionDir)..\Tools\PepitaGet.dll" />
   <Target Name="BeforeBuild">
     <PepitaGet.RestorePackagesTask />
   </Target>
   <Target Name="AfterBuild">
-    <PepitaPackage.CreatePackageTask  NuGetBuildDirectory="$(MSBuildThisFileDirectory)"/>      
+    <!-- <PepitaPackage.CreatePackageTask  NuGetBuildDirectory="$(MSBuildThisFileDirectory)"/> -->
   </Target>
-  -->
 </Project>
