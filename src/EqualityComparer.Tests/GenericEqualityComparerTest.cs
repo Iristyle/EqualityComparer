@@ -21,6 +21,18 @@ namespace EqualityComparer.Tests
 			public static GenericEqualityComparer<A> AllPropertiesComparer = new GenericEqualityComparer<A>((a1, a2) => a1.Integer == a2.Integer && a1.String == a2.String);
 		}
 
+		class B
+		{
+			public B(int integer, A a)
+			{
+				Integer = integer;
+				A = @a;
+			}
+
+			public int Integer { get; set; }
+			public A A { get; set; }
+		}
+
 		[Fact]
 		[SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "We're testing the constructor!")]
 		public void Constructor_ThrowsOnNullFunc()
@@ -75,6 +87,15 @@ namespace EqualityComparer.Tests
 			b = new A(3, "Bar");
 
 			Assert.NotEqual(a, b, GenericEqualityComparer<A>.ByAllMembers());
+		}
+
+		[Fact]
+		public void ByAllProperties_TrueOnMatchedObjectInstancesWithCustomComparer()
+		{
+			B b = new B(6, new A(5, "Foo")),
+			b2 = new B(6, new A(5, "Bar"));
+
+			Assert.Equal(b, b2, GenericEqualityComparer<B>.ByAllMembers(new[] { A.IntegerOnlyComparer }));
 		}
 	}
 }
