@@ -1,3 +1,5 @@
+![Logo](https://github.com/EastPoint/EqualityComparer/raw/master/logo-128.png)
+
 # EqualityComparer
 A super basic way of comparing object instances on a property by property / member by member basis.  There are allowances for overriding default comparison behaviors, and it's mostly implemented using Expressions.
 
@@ -127,3 +129,7 @@ ByAllMembers also has an overload that lets you specify comparers to use when a 
 Fork the code, and submit a pull request!  
 
 Any useful changes are welcomed.  If you have an idea you'd like to see implemented that strays far from the simple spirit of the application, ping us first so that we're on the same page.
+
+## Credits
+
+Creative Commons icon courtesy [WikiMedia](http://commons.wikimedia.org/wiki/File:Emblem-equal.svg)

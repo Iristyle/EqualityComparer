@@ -12,6 +12,7 @@
     <releaseNotes>Initial release</releaseNotes>
     <projectUrl>https://github.com/EastPoint/EqualityComparer</projectUrl>
     <licenseUrl>https://github.com/EastPoint/EqualityComparer/blob/master/LICENSE.md</licenseUrl>
+    <iconUrl>https://github.com/EastPoint/EqualityComparer/raw/master/logo-128.png</iconUrl>
     <tags>equality comparer expression reflection</tags>
     <language>en-US</language>
     <copyright>East Point Systems 2012 and contributors</copyright>
