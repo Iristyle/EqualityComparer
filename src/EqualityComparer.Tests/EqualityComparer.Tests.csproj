@@ -23,6 +23,7 @@
     <Ruleset>EPS.Test</Ruleset>
     <NoWarn>3016</NoWarn>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath Condition="$(OutputPath) == ''">bin\Debug</OutputPath>
@@ -128,13 +129,12 @@
   <!--
   <Import Project="..\Build\SharedPostBuild.targets" />
   -->
-  <UsingTask TaskName="PepitaGet.RestorePackagesTask" AssemblyFile="$(SolutionDir)\..\Tools\PepitaGet.dll" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   -->
   <Target Name="BeforeBuild">
-    <PepitaGet.RestorePackagesTask />
   </Target>
   <Target Name="AfterBuild">
   </Target>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

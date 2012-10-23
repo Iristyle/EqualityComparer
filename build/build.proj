@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <BuildOutDir>$(MSBuildThisFileDirectory)\BuildArtifacts\</BuildOutDir>
+    <RunCodeAnalysis>Always</RunCodeAnalysis> <!-- Default based on project, Always or Never -->
+    <CustomizableOutDir>true</CustomizableOutDir>
+    <CustomizablePublishDir>true</CustomizablePublishDir>
+    <BuildInParallel>true</BuildInParallel>
+    <Configuration Condition="$(Configuration) == ''">Release</Configuration>
+    <!-- <PlatformToBuild>Any CPU</PlatformToBuild> -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectToBuild Include="../src/EqualityComparer.sln">
+      <Properties>Configuration=$(Configuration);OutDir=$(BuildOutDir)</Properties>
+    </ProjectToBuild>
+  </ItemGroup>
+
+  <Target Name="Build">
+    <MSBuild Projects="@(ProjectToBuild)" BuildInParallel="$(BuildInParallel)"
+      Properties="Configuration=$(Configuration)" />
+  </Target>
+</Project>
