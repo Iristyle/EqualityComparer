@@ -22,6 +22,7 @@
     <CodeAnalysisRuleDirectories>$(FxCopRulesPath)</CodeAnalysisRuleDirectories>
     -->
     <Ruleset>EPS</Ruleset>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath Condition="$(OutputPath) == ''">bin\Debug</OutputPath>
@@ -76,13 +77,10 @@
   <!--
   <Import Project="..\Build\SharedPostBuild.targets" />
   -->
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.   
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets. -->
-  <UsingTask TaskName="PepitaGet.RestorePackagesTask" AssemblyFile="$(SolutionDir)\..\Tools\PepitaGet.dll" />
   <Target Name="BeforeBuild">
-    <PepitaGet.RestorePackagesTask />
   </Target>
   <Target Name="AfterBuild">
-    <!-- <PepitaPackage.CreatePackageTask  NuGetBuildDirectory="$(MSBuildThisFileDirectory)"/> -->
   </Target>
 </Project>
