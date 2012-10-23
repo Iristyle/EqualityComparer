@@ -109,3 +109,6 @@ CVS/
 *.sig
 *.tmp
 Backup*
+
+#Test related files
+*.ncrunchsolution
