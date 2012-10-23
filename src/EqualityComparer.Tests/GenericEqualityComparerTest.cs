@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
@@ -32,6 +33,11 @@ namespace EqualityComparer.Tests
 			public int Integer { get; set; }
 			public A A { get; set; }
 		}
+
+    class DictionaryObj
+    {
+      public Dictionary<int, A> ObjectDictionary { get; set; }
+    }
 
 		[Fact]
 		[SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "We're testing the constructor!")]
@@ -97,5 +103,14 @@ namespace EqualityComparer.Tests
 
 			Assert.Equal(b, b2, GenericEqualityComparer<B>.ByAllMembers(new[] { A.IntegerOnlyComparer }));
 		}
+
+    [Fact]
+    public void ByAllProperties_TrueOnMatchedDictionaryObjectInstances()
+    {
+      DictionaryObj dobj1 = new DictionaryObj { ObjectDictionary = new Dictionary<int, A> { { 1, new A(1, "one") }, { 2, new A(2, "two") } } };
+      DictionaryObj dobj2 = new DictionaryObj { ObjectDictionary = new Dictionary<int, A> { { 1, new A(1, "one") }, { 2, new A(2, "two") } } };
+
+      Assert.Equal(dobj1, dobj2, GenericEqualityComparer<DictionaryObj>.ByAllMembers());
+    }
 	}
 }
