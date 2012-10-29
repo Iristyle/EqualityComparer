@@ -74,7 +74,8 @@ namespace EqualityComparer.Reflection.Tests
 			//not the simplest example -- but should find these guys
 			var interfaces = typeof(Dictionary<int, int>).GetAllBaseTypesAndInterfaces();
 
-			Assert.Equal(10, interfaces.Count);
+			//.NET 4 has 10 ifaces / .NET 4.5 adds IReadOnlyDictionary<int, int> and IReadOnlyCollection<KeyValuePair<int, int>>
+			Assert.True(interfaces.Count >= 10);
 			Assert.True(interfaces[typeof(Dictionary<int, int>)] == 0);
 			Assert.True(interfaces[typeof(IDictionary<int, int>)] == 1);
 			Assert.True(interfaces[typeof(ICollection<KeyValuePair<int, int>>)] == 1);
