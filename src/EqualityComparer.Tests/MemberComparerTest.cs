@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Xunit;
@@ -78,6 +78,13 @@ namespace EqualityComparer.Tests
 		public void Equal_TrueOnPrimitive()
 		{
 			Assert.True(MemberComparer.Equal(3, 3));
+		}
+
+		[Fact]
+		public void Equal_TrueOnKeyValuePair()
+		{
+			Assert.True(MemberComparer.Equal(new KeyValuePair<int, string>(1, "one"), 
+				new KeyValuePair<int, string>(1, "one")));
 		}
 
 		[Fact]
@@ -221,6 +228,22 @@ namespace EqualityComparer.Tests
 			var nestedCollection2 = new { Property = "value", NestedProperties = new List<string>() { "a", "b" } };
 
 			Assert.True(MemberComparer.Equal(nestedCollection1, nestedCollection2));
+		}
+
+		class DictionaryObj
+		{
+			public Dictionary<int, ClassWithFieldsAndProperties> ObjectDictionary { get; set; }
+		}
+
+		[Fact]
+		public void Equal_TrueOnMatchedDictionaryObjectInstances()
+		{
+			DictionaryObj dobj1 = new DictionaryObj { ObjectDictionary = new Dictionary<int, ClassWithFieldsAndProperties> 
+				{ { 1, new ClassWithFieldsAndProperties() { Foo = "one", Bar= "two" } }, { 2, new ClassWithFieldsAndProperties() { Foo = "three", Bar= "four" } } } };
+			DictionaryObj dobj2 = new DictionaryObj { ObjectDictionary = new Dictionary<int, ClassWithFieldsAndProperties> 
+				{ { 1, new ClassWithFieldsAndProperties() { Foo = "one", Bar= "two" } }, { 2, new ClassWithFieldsAndProperties() { Foo = "three", Bar= "four" } } } };
+			
+			Assert.True(MemberComparer.Equal(dobj1, dobj2));
 		}
 
 		[Fact]

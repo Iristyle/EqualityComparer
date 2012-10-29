@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -98,7 +98,8 @@ namespace EqualityComparer
 						object.ReferenceEquals(exceptionX, exceptionY);
 					return;
 				}
-				else if (t.IsValueType || t.IsPrimitive)
+				else if ((t.IsValueType || t.IsPrimitive) && 
+					!(t.IsGenericType && (t.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))))
 				{
 					Compare = (valueX, valueY, comparers) => comparers.ContainsKey(t) ?
 						comparers[t].Equals(valueX, valueY) :
