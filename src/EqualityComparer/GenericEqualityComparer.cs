@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace EqualityComparer
 {
@@ -73,6 +74,15 @@ namespace EqualityComparer
       return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y));
     }
 
+    //TODO: perhaps this should be an out
+    public static GenericEqualityComparer<T> ByAllMembers(Dictionary<string, string> differences)
+    {
+      //TODO: internal calls should be allowed to pass null as an optimization, but we don't external callers to... hmm...
+      if (null == differences) { throw new ArgumentNullException("differences"); }
+
+      return ByAllMembersImpl(new IEqualityComparer[] {}, differences);
+    }
+
     /// <summary>
     /// Shortcut method to get a simple generic IEqualityComparer{T} where the comparison is by all properties and fields on the instance,
     /// with user defined overrides available on specific encountered types.
@@ -85,5 +95,25 @@ namespace EqualityComparer
     {
       return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y, customComparers));
     }
+
+    public static GenericEqualityComparer<T> ByAllMembers(IEnumerable<IEqualityComparer> customComparers, Dictionary<string, string> differences)
+    {
+      if (null == differences) { throw new ArgumentNullException("differences"); }
+      return ByAllMembersImpl(customComparers, differences);
+    }
+
+    internal static GenericEqualityComparer<T> ByAllMembersImpl(IEnumerable<IEqualityComparer> customComparers, Dictionary<string, string> differences)
+    {
+      return new GenericEqualityComparer<T>((x, y) =>
+      {
+        var diffs = MemberComparer.Differences(x, y, customComparers);
+        if (null == differences) 
+          { differences = diffs; }
+        else
+          { differences = differences.Union(diffs).ToDictionary(pair => pair.Key, pair => pair.Value); }
+
+        return (diffs.Count == 0);
+      });
+    } 
   }
 }

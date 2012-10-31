@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace EqualityComparer.Tests
@@ -14,9 +15,21 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_ThrowsOnNullEqualityComparerList()
+    {
+      Assert.Throws<ArgumentNullException>(() => MemberComparer.Differences(4, 4, null));
+    }
+
+    [Fact]
     public void Equal_ThrowsOnNullComparerInComparerList()
     {
       Assert.Throws<ArgumentNullException>(() => MemberComparer.Equal(4, 4, new IEqualityComparer[] { null }));
+    }
+
+    [Fact]
+    public void Differences_ThrowsOnNullComparerInComparerList()
+    {
+      Assert.Throws<ArgumentNullException>(() => MemberComparer.Differences(4, 4, new IEqualityComparer[] { null }));
     }
 
     private class FooComparer : IEqualityComparer
@@ -39,9 +52,21 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_ThrowsOnNonGenericEqualityComparerInList()
+    {
+      Assert.Throws<ArgumentException>(() => MemberComparer.Differences(4, 4, new[] { new FooComparer() }));
+    }
+
+    [Fact]
     public void Equal_ThrowsOnMoreThanOneComparerForATypeInList()
     {
       Assert.Throws<ArgumentException>(() => MemberComparer.Equal(4, 4, new[] { GenericEqualityComparer<int>.ByAllMembers(), GenericEqualityComparer<int>.ByAllMembers() }));
+    }
+
+    [Fact]
+    public void Differences_ThrowsOnMoreThanOneComparerForATypeInList()
+    {
+      Assert.Throws<ArgumentException>(() => MemberComparer.Differences(4, 4, new[] { GenericEqualityComparer<int>.ByAllMembers(), GenericEqualityComparer<int>.ByAllMembers() }));
     }
 
     [Fact]
@@ -51,9 +76,21 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnNullXNullY()
+    {
+      Assert.Empty(MemberComparer.Differences(null as List<int>, null as List<int>));
+    }
+
+    [Fact]
     public void Equal_FalseOnNullXNonNullY()
     {
       Assert.False(MemberComparer.Equal(null as List<int>, new List<int>()));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnNullXEmptyY()
+    {
+      Assert.Empty(MemberComparer.Differences(null as List<int>, new List<int>()));
     }
 
     [Fact]
@@ -63,9 +100,21 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnNullYNonNullX()
+    {
+      Assert.Empty(MemberComparer.Differences(new List<int>(), null as List<int>));
+    }
+
+    [Fact]
     public void Equal_TrueOnString()
     {
       Assert.True(MemberComparer.Equal("foo", "foo"));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnMatchingString()
+    {
+      Assert.Empty(MemberComparer.Differences("foo", "foo"));
     }
 
     [Fact]
@@ -75,9 +124,22 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_HasExpectedListOnMismatchedString()
+    {
+      Assert.True(MemberComparer.Differences("foo", "bar")
+        .SequenceEqual(new Dictionary<string, string>() { { "", "bar" } } ));
+    }
+
+    [Fact]
     public void Equal_TrueOnPrimitive()
     {
       Assert.True(MemberComparer.Equal(3, 3));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnMatchedPrimitive()
+    {
+      Assert.Empty(MemberComparer.Differences(3, 3));
     }
 
     [Fact]
@@ -88,9 +150,23 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnMatchedKeyValuePair()
+    {
+      Assert.Empty(MemberComparer.Differences(new KeyValuePair<int, string>(1, "one"),
+        new KeyValuePair<int, string>(1, "one")));
+    }
+
+    [Fact]
     public void Equal_FalseOnMismatchedPrimitive()
     {
       Assert.False(MemberComparer.Equal(5, 15));
+    }
+
+    [Fact]
+    public void Differences_HasExpectedListOnOnMismatchedPrimitive()
+    {
+      Assert.True(MemberComparer.Differences(5, 15)
+        .SequenceEqual(new Dictionary<string, string>() { { "", "15" } }));
     }
 
     [Fact]
@@ -99,6 +175,14 @@ namespace EqualityComparer.Tests
       var anonymous = new { PropertyA = "A", Integer = 23, Guid = Guid.NewGuid() };
 
       Assert.True(MemberComparer.Equal(anonymous, anonymous));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnSameObject()
+    {
+      var anonymous = new { PropertyA = "A", Integer = 23, Guid = Guid.NewGuid() };
+
+      Assert.Empty(MemberComparer.Differences(anonymous, anonymous));
     }
 
     [Fact]
@@ -111,11 +195,29 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnDifferentObjectsWithSameValues()
+    {
+      Guid sharedGuid = Guid.NewGuid();
+      DateTime now = DateTime.Now;
+      Assert.Empty(MemberComparer.Differences(new { PropertyA = "A", Integer = 23, Guid = sharedGuid, Date = now },
+        new { PropertyA = "A", Integer = 23, Guid = sharedGuid, Date = now }));
+    }
+
+    [Fact]
     public void Equal_FalseOnDifferentObjectsWithDifferentValues()
     {
       Guid sharedGuid = Guid.NewGuid();
       Assert.False(MemberComparer.Equal(new { PropertyA = "B", Integer = 23, Guid = sharedGuid },
         new { PropertyA = "A", Integer = 23, Guid = sharedGuid }));
+    }
+
+    [Fact]
+    public void Differences_HasExpectedListOnDifferentObjectsWithDifferentValues()
+    {
+      Guid sharedGuid = Guid.NewGuid();
+      Assert.True(MemberComparer.Differences(new { PropertyA = "B", Integer = 23, Guid = sharedGuid },
+        new { PropertyA = "A", Integer = 23, Guid = sharedGuid })
+        .SequenceEqual(new Dictionary<string, string>() { { "PropertyA", "A" } }));
     }
 
     [Fact]
@@ -125,6 +227,15 @@ namespace EqualityComparer.Tests
       var sub2 = new { PropertyB = "b1" };
 
       Assert.True(MemberComparer.Equal(sub1, sub2));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnAnonymousObjectsWithNestedObjects()
+    {
+      var sub1 = new { PropertyB = "b1" };
+      var sub2 = new { PropertyB = "b1" };
+
+      Assert.Empty(MemberComparer.Differences(sub1, sub2));
     }
 
     [Fact]
@@ -138,12 +249,31 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnObjectsWithNestedObjects()
+    {
+      var sub1 = new { PropertyB = "b1" };
+      var sub2 = new { PropertyB = "b1" };
+
+      Assert.Empty(MemberComparer.Differences(new { PropertyA = "A", Integer = 23, Sub = sub1 },
+        new { PropertyA = "A", Integer = 23, Sub = sub2 }));
+    }
+
+    [Fact]
     public void Equal_FalseOnAnonymousObjectsWithNestedObjectsWithDifferentValues()
     {
       var sub1 = new { PropertyB = "b1" };
       var sub2 = new { PropertyB = "b2" };
 
       Assert.False(MemberComparer.Equal(sub1, sub2));
+    }
+
+    [Fact]
+    public void Differences_HasExpectedListOnAnonymousObjectsWithNestedObjectsWithDifferentValues()
+    {
+      var sub1 = new { PropertyB = "b1" };
+      var sub2 = new { PropertyB = "b2" };
+      Assert.True(MemberComparer.Differences(sub1, sub2).SequenceEqual(
+        new Dictionary<string, string>() { { "PropertyB", "b2" } }));
     }
 
     [Fact]
@@ -157,6 +287,17 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_HasExpectedListOnObjectsWithNestedObjectsWithDifferentValues()
+    {
+      var sub1 = new { PropertyB = "b1" };
+      var sub2 = new { PropertyB = "b2" };
+
+      Assert.True(MemberComparer.Differences(new { PropertyA = "A", Integer = 23, Sub = sub1 },
+        new { PropertyA = "A", Integer = 23, Sub = sub2 }).SequenceEqual(
+        new Dictionary<string, string>() { { "PropertyB", "b2" } }));
+    }
+
+    [Fact]
     public void Equal_TrueOnNullAnonymousObjects()
     {
       //anonymous types that look the same like these actually share a static type (as constructed by the compiler)
@@ -166,6 +307,18 @@ namespace EqualityComparer.Tests
       sub2 = null;
 
       Assert.True(MemberComparer.Equal(sub1, sub2));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnNullAnonymousObjects()
+    {
+      //anonymous types that look the same like these actually share a static type (as constructed by the compiler)
+      var sub1 = new { PropertyB = "b1" };
+      sub1 = null;
+      var sub2 = new { PropertyB = "b1" };
+      sub2 = null;
+
+      Assert.Empty(MemberComparer.Differences(sub1, sub2));
     }
 
     [Fact]
@@ -182,6 +335,19 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnObjectsWithNullNestedObjects()
+    {
+      //anonymous types that look the same like these actually share a static type (as constructed by the compiler)
+      var sub1 = new { PropertyB = "b1" };
+      sub1 = null;
+      var sub2 = new { PropertyB = "b1" };
+      sub2 = null;
+
+      Assert.Empty(MemberComparer.Differences(new { PropertyA = "A", Integer = 23, Sub = sub1 },
+        new { PropertyA = "A", Integer = 23, Sub = sub2 }));
+    }
+
+    [Fact]
     public void Equal_FalseOnObjectsWithNullNestedObjectsWithDifferentValues()
     {
       var sub1 = new { PropertyB = "b1" };
@@ -191,6 +357,19 @@ namespace EqualityComparer.Tests
 
       Assert.False(MemberComparer.Equal(new { PropertyA = "A", Integer = 24, Sub = sub1 },
         new { PropertyA = "A", Integer = 23, Sub = sub2 }));
+    }
+
+    [Fact]
+    public void Differences_HasExpectedListOnObjectsWithNullNestedObjectsWithDifferentValues()
+    {
+      var sub1 = new { PropertyB = "b1" };
+      sub1 = null;
+      var sub2 = new { PropertyB = "b2" };
+      sub2 = null;
+
+      Assert.True(MemberComparer.Differences(new { PropertyA = "A", Integer = 24, Sub = sub1 },
+        new { PropertyA = "A", Integer = 23, Sub = sub2 }).SequenceEqual(
+        new Dictionary<string, string>() { { "PropertyB", "b2" } }));
     }
 
     [Fact]
@@ -205,6 +384,18 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_HasExpectedListOnObjectsWithOneNullNestedObjectAndOneNonNullNestedObject()
+    {
+      var sub1 = new { PropertyB = "b1" };
+      var sub2 = new { PropertyB = "b2" };
+      sub2 = null;
+
+      Assert.True(MemberComparer.Differences(new { PropertyA = "A", Integer = 23, Sub = sub1 },
+        new { PropertyA = "A", Integer = 23, Sub = sub2 }).SequenceEqual(
+        new Dictionary<string, string>() { { "PropertyB", "b2" } }));
+    }
+
+    [Fact]
     public void Equal_TrueOnDoubleNestedObjectsWithSameValues()
     {
       //we've nested two levels deep
@@ -216,9 +407,26 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnDoubleNestedObjectsWithSameValues()
+    {
+      //we've nested two levels deep
+      var sub2 = new { PropertyC = "b2" };
+      var sub1 = new { PropertyB = "b1", Sub = sub2 };
+
+      Assert.Empty(MemberComparer.Differences(new { PropertyA = "A", Integer = 23, Sub = sub1 },
+        new { PropertyA = "A", Integer = 23, Sub = sub1 }));
+    }
+
+    [Fact]
     public void Equal_TrueOnObjectsWithEnumProperties()
     {
       Assert.True(MemberComparer.Equal(new { Day = DayOfWeek.Monday }, new { Day = DayOfWeek.Monday }));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnObjectsWithEnumProperties()
+    {
+      Assert.Empty(MemberComparer.Differences(new { Day = DayOfWeek.Monday }, new { Day = DayOfWeek.Monday }));
     }
 
     [Fact]
@@ -228,6 +436,15 @@ namespace EqualityComparer.Tests
       var nestedCollection2 = new { Property = "value", NestedProperties = new List<string>() { "a", "b" } };
 
       Assert.True(MemberComparer.Equal(nestedCollection1, nestedCollection2));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnObjectsWithNestedCollections()
+    {
+      var nestedCollection1 = new { Property = "value", NestedProperties = new List<string>() { "a", "b" } };
+      var nestedCollection2 = new { Property = "value", NestedProperties = new List<string>() { "a", "b" } };
+
+      Assert.Empty(MemberComparer.Differences(nestedCollection1, nestedCollection2));
     }
 
     class DictionaryObj
@@ -247,6 +464,17 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnMatchedDictionaryObjectInstances()
+    {
+      DictionaryObj dobj1 = new DictionaryObj { ObjectDictionary = new Dictionary<int, ClassWithFieldsAndProperties>
+        { { 1, new ClassWithFieldsAndProperties() { Foo = "one", Bar= "two" } }, { 2, new ClassWithFieldsAndProperties() { Foo = "three", Bar= "four" } } } };
+      DictionaryObj dobj2 = new DictionaryObj { ObjectDictionary = new Dictionary<int, ClassWithFieldsAndProperties>
+        { { 1, new ClassWithFieldsAndProperties() { Foo = "one", Bar= "two" } }, { 2, new ClassWithFieldsAndProperties() { Foo = "three", Bar= "four" } } } };
+
+      Assert.Empty(MemberComparer.Differences(dobj1, dobj2));
+    }
+
+    [Fact]
     public void Equal_FalseOnObjectsWithNestedCollections()
     {
       var nestedCollection1 = new { Property = "value", NestedProperties = new List<string>() { "a", "b" } };
@@ -256,15 +484,41 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_HasExpectedListOnOnObjectsWithNestedCollections()
+    {
+      // TODO: this is one of the trickiest cases to spec out - think about it!
+      var nestedCollection1 = new { Property = "value", NestedProperties = new List<string>() { "a", "b" } };
+      var nestedCollection2 = new { Property = "value", NestedProperties = new List<string>() { "b", "a" } };
+
+      // TODO: can we really detect a shift in a list? seems non-trivial
+      Assert.True(MemberComparer.Differences(nestedCollection1, nestedCollection2).SequenceEqual(
+        new Dictionary<string, string>() { { "PropertyB", "[\"b\",\"a\"]" } }));
+    }
+
+    [Fact]
     public void Equal_TrueOnEqualCollections()
     {
       Assert.True(MemberComparer.Equal(new int[] { 5, 10 }, new int[] { 5, 10 }));
     }
 
     [Fact]
+    public void Differences_EmptyOnEqualCollections()
+    {
+      Assert.Empty(MemberComparer.Differences(new int[] { 5, 10 }, new int[] { 5, 10 }));
+    }
+
+    [Fact]
     public void Equal_FalseOnMismatchedCollections()
     {
       Assert.False(MemberComparer.Equal(new int[] { 5, 10 }, new int[] { 10, 5 }));
+    }
+
+    [Fact]
+    public void Differences_HasExpectedListOnMismatchedCollections()
+    {
+      // TODO: Need to think about how to persist differences list here
+      Assert.True(MemberComparer.Differences(new int[] { 5, 10 }, new int[] { 10, 5 })
+        .SequenceEqual(new Dictionary<string, string>() { { "", "[10,5]" } }));
     }
 
     class ClassWithFieldsAndProperties
@@ -282,10 +536,27 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnClassWithMismatchedPropertiesAndFieldsWithCustomComparer()
+    {
+      string Bar = "bar";
+      Assert.Empty(MemberComparer.Differences(new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }, new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar },
+         new[] { new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) }));
+    }
+
+    [Fact]
     public void Equal_TrueOnClassWithMismatchedPropertiesAndFieldsWithCustomComparerNested()
     {
       string Bar = "bar";
       Assert.True(MemberComparer.Equal(new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar } },
+        new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar } },
+        new[] { new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) }));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnClassWithMismatchedPropertiesAndFieldsWithCustomComparerNested()
+    {
+      string Bar = "bar";
+      Assert.Empty(MemberComparer.Differences(new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar } },
         new { Integer = 5, Custom = new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar } },
         new[] { new GenericEqualityComparer<ClassWithFieldsAndProperties>((a, b) => a.Bar == b.Bar) }));
     }
@@ -298,10 +569,25 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnClasswithPropertiesAndFields()
+    {
+      string Bar = "123", Foo = "456";
+      Assert.Empty(MemberComparer.Differences(new ClassWithFieldsAndProperties() { Bar = Bar, Foo = Foo }, new ClassWithFieldsAndProperties() { Bar = Bar, Foo = Foo }));
+    }
+
+    [Fact]
     public void Equal_FalseOnClassWithMismatchFieldValues()
     {
       string Bar = "bar";
       Assert.False(MemberComparer.Equal(new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }, new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar }));
+    }
+
+    [Fact]
+    public void Differences_HasExpectedListOnClassWithMismatchFieldValues()
+    {
+      string Bar = "bar";
+      Assert.True(MemberComparer.Differences(new ClassWithFieldsAndProperties() { Foo = "456", Bar = Bar }, new ClassWithFieldsAndProperties() { Foo = "4567", Bar = Bar })
+        .SequenceEqual(new Dictionary<string, string>() { { "Foo", "4567" } }));
     }
 
     [Fact]
@@ -312,10 +598,24 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyOnExactDates()
+    {
+      DateTime now = DateTime.Now;
+      Assert.Empty(MemberComparer.Differences(now, now));
+    }
+
+    [Fact]
     public void Equal_TrueToSecondOnEqualDates()
     {
       DateTime now = DateTime.Now;
       Assert.True(MemberComparer.Equal(now, now, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
+    }
+
+    [Fact]
+    public void Differences_EmptyToSecondOnEqualDates()
+    {
+      DateTime now = DateTime.Now;
+      Assert.Empty(MemberComparer.Differences(now, now, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
     }
 
     [Fact]
@@ -328,12 +628,32 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_HasExpectedListOnDatesDifferingByLessThanASecond()
+    {
+      DateTime one = DateTime.Parse("07:27:15.01"),
+      two = DateTime.Parse("07:27:15.49");
+
+      // TODO: we need to make sure this is the right ISO date format
+      Assert.True(MemberComparer.Differences(one, two)
+        .SequenceEqual(new Dictionary<string, string>() { { "", two.ToString() } }));
+    }
+
+    [Fact]
     public void Equal_TrueToSecondOnDatesDifferingByLessThanASecondWithCustomComparer()
     {
       DateTime one = DateTime.Parse("07:27:15.01"),
       two = DateTime.Parse("07:27:15.49");
 
       Assert.True(MemberComparer.Equal(one, two, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
+    }
+
+    [Fact]
+    public void Differences_EmptyToSecondOnDatesDifferingByLessThanASecondWithCustomComparer()
+    {
+      DateTime one = DateTime.Parse("07:27:15.01"),
+      two = DateTime.Parse("07:27:15.49");
+
+      Assert.Empty(MemberComparer.Differences(one, two, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
     }
 
     [Fact]
@@ -349,10 +669,29 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_EmptyToSecondOnNestedDatesDifferingByLessThanASecondWithCustomComparer()
+    {
+      DateTime one = DateTime.Parse("07:27:15.01"),
+      two = DateTime.Parse("07:27:15.49");
+
+      var a = new { Foo = 5, Bar = new { Now = one } };
+      var b = new { Foo = 5, Bar = new { Now = two } };
+
+      Assert.Empty(MemberComparer.Differences(one, two, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
+    }
+
+    [Fact]
     public void Equal_TrueToSecondOnNestedCollectionOfDatesDifferingByLessThanASecondWithCustomComparer()
     {
       var dates = new[] { DateTime.Parse("07:27:15.01"), DateTime.Parse("07:27:15.49") };
       Assert.True(MemberComparer.Equal(new { A = 1, Dates = dates }, new { A = 1, Dates = dates }, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
+    }
+
+    [Fact]
+    public void Differences_EmptyToSecondOnNestedCollectionOfDatesDifferingByLessThanASecondWithCustomComparer()
+    {
+      var dates = new[] { DateTime.Parse("07:27:15.01"), DateTime.Parse("07:27:15.49") };
+      Assert.Empty(MemberComparer.Differences(new { A = 1, Dates = dates }, new { A = 1, Dates = dates }, new[] { new DateComparer(DateComparisonType.TruncatedToSecond) }));
     }
 
     class ClassWithStatics
@@ -371,11 +710,28 @@ namespace EqualityComparer.Tests
     }
 
     [Fact]
+    public void Differences_IgnoresStatics()
+    {
+      var a = new ClassWithStatics() { Value = "Foo" };
+      var b = new ClassWithStatics() { Value = "Foo" };
+
+      Assert.Empty(MemberComparer.Differences(a, b));
+    }
+
+    [Fact]
     public void Equal_TrueOnRefToSameException()
     {
       var exception = new ArgumentNullException("foo");
 
       Assert.True(MemberComparer.Equal(exception, exception));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnRefToSameException()
+    {
+      var exception = new ArgumentNullException("foo");
+
+      Assert.Empty(MemberComparer.Differences(exception, exception));
     }
 
     class ExceptionHolder
@@ -389,6 +745,14 @@ namespace EqualityComparer.Tests
       var exception = new ArgumentNullException("foo");
 
       Assert.True(MemberComparer.Equal(new ExceptionHolder() { Exception = exception }, new ExceptionHolder() { Exception = exception }));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnNestedRefToSameException()
+    {
+      var exception = new ArgumentNullException("foo");
+
+      Assert.Empty(MemberComparer.Differences(new ExceptionHolder() { Exception = exception }, new ExceptionHolder() { Exception = exception }));
     }
 
     [Fact(Skip = "This will require quite a bit of effort to get right, so punted for now")]
@@ -416,6 +780,12 @@ namespace EqualityComparer.Tests
       Assert.True(MemberComparer.Equal<IFoo>(new Foo() { Integer = 5 }, new Foo() { Integer = 5 }));
     }
 
+    [Fact]
+    public void Differences_EmptyOnInterfaces()
+    {
+      Assert.Empty(MemberComparer.Differences<IFoo>(new Foo() { Integer = 5 }, new Foo() { Integer = 5 }));
+    }
+
     interface IBar
     {
       IFoo Foo { get; }
@@ -432,6 +802,12 @@ namespace EqualityComparer.Tests
       Assert.True(MemberComparer.Equal<IBar>(new Bar() { Foo = new Foo() { Integer = 5 } }, new Bar() { Foo = new Foo() { Integer = 5 } }));
     }
 
+    [Fact]
+    public void Differences_EmptyOnNestedInterfaces()
+    {
+      Assert.Empty(MemberComparer.Differences<IBar>(new Bar() { Foo = new Foo() { Integer = 5 } }, new Bar() { Foo = new Foo() { Integer = 5 } }));
+    }
+
     class A
     {
       public int Integer { get; set; }
@@ -446,6 +822,12 @@ namespace EqualityComparer.Tests
     public void Equal_ScopesComparisonToSpecifiedType()
     {
       Assert.True(MemberComparer.Equal<A>(new B() { Integer = 4, String = "Foo" }, new B() { Integer = 4, String = "Bar" }));
+    }
+
+    [Fact]
+    public void Differences_EmptyOnScopesComparisonToSpecifiedType()
+    {
+      Assert.Empty(MemberComparer.Differences<A>(new B() { Integer = 4, String = "Foo" }, new B() { Integer = 4, String = "Bar" }));
     }
   }
 }

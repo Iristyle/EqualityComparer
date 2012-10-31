@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -14,6 +14,23 @@ namespace EqualityComparer
   [SuppressMessage("Gendarme.Rules.Smells", "AvoidSpeculativeGeneralityRule", Justification = "This is a class useful to testing and does not represent speculation")]
   public static class MemberComparer
   {
+    public static Dictionary<string, string> Differences<T>(T instanceX, T instanceY)
+    {
+      return Differences(instanceX, instanceY, new IEqualityComparer[] { });
+    }
+
+    public static Dictionary<string, string> Differences<T>(T instanceX, T instanceY, IEnumerable<IEqualityComparer> customComparers)
+    {
+      var differences = new Dictionary<string, string>();
+
+      if (null == instanceX && null == instanceY) { return differences; }
+      if (null == instanceX || null == instanceY) { return differences; }
+
+      var customComparerDictionary = BuildComparerDictionary(customComparers);
+      Cache<T>.Compare(instanceX, instanceY, customComparerDictionary, differences);
+      return differences;
+    }
+
     /// <summary>   Does a public property by property and field by field comparison of the two objects. </summary>
     /// <remarks>   ebrown, 1/19/2011. </remarks>
     /// <typeparam name="T">    Generic type parameter - inferred by compiler. </typeparam>
@@ -38,6 +55,12 @@ namespace EqualityComparer
     {
       if (null == instanceX && null == instanceY) { return true; }
       if (null == instanceX || null == instanceY) { return false; }
+      var customComparerDictionary = BuildComparerDictionary(customComparers);
+      return Cache<T>.Compare(instanceX, instanceY, customComparerDictionary, null);
+    }
+
+    private static Dictionary<Type, IEqualityComparer> BuildComparerDictionary(IEnumerable<IEqualityComparer> customComparers)
+    {
       if (null == customComparers)
       {
         throw new ArgumentNullException("customComparers");
@@ -62,9 +85,7 @@ namespace EqualityComparer
         throw new ArgumentException("Only one IEqualityComparer<> instance per Type is allowed in the list");
       }
 
-      var customComparerDictionary = comparerPairs.ToDictionary(pair => pair.Key, pair => pair.Value);
-
-      return Cache<T>.Compare(instanceX, instanceY, customComparerDictionary);
+      return comparerPairs.ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
     static bool ImplementsItsOwnEqualsMethod(this Type type)
@@ -76,7 +97,7 @@ namespace EqualityComparer
     static class Cache<T>
     {
       //instance, instance,
-      internal static readonly Func<T, T, IDictionary<Type, IEqualityComparer>, bool> Compare = delegate { return true; };
+      internal static readonly Func<T, T, IDictionary<Type, IEqualityComparer>, Dictionary<string, string>, bool> Compare = delegate { return true; };
 
       [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "More readable with static constructor / no easy way to write without")]
       static Cache()
@@ -85,37 +106,52 @@ namespace EqualityComparer
 
         if (typeof(string) == t)
         {
-          Compare = (stringX, stringY, comparers) => comparers.ContainsKey(t) ?
-            comparers[t].Equals(stringX, stringY) :
-            StringComparer.Ordinal.Equals(stringX, stringY);
+          Compare = (stringX, stringY, comparers, differences) => 
+            {
+              var result = comparers.ContainsKey(t) ? comparers[t].Equals(stringX, stringY) :
+                StringComparer.Ordinal.Equals(stringX, stringY);
+              if (!result && null != differences) { differences.Add(string.Empty, stringY as string); }
+              return result;
+            };
           return;
         }
         //for now, do a ref check, since Exception is a bit of an oddball type
         else if (typeof(Exception).IsAssignableFrom(t))
         {
-          Compare = (exceptionX, exceptionY, comparers) => comparers.ContainsKey(t) ?
-            comparers[t].Equals(exceptionX, exceptionY) :
-            object.ReferenceEquals(exceptionX, exceptionY);
+          Compare = (exceptionX, exceptionY, comparers, differences) => 
+            {
+              var result = comparers.ContainsKey(t) ? comparers[t].Equals(exceptionX, exceptionY) :
+                object.ReferenceEquals(exceptionX, exceptionY);
+              //TODO: should this be a serialization of the exception?? probably
+              if (!result && null != differences) { differences.Add(string.Empty, exceptionY.ToString()); }
+              return result;
+            };
           return;
         }
         else if ((t.IsValueType || t.IsPrimitive) &&
           !(t.IsGenericType && (t.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))))
         {
-          Compare = (valueX, valueY, comparers) => comparers.ContainsKey(t) ?
-            comparers[t].Equals(valueX, valueY) :
-            valueX.Equals(valueY);
+          Compare = (valueX, valueY, comparers, differences) => 
+            {
+              var result = comparers.ContainsKey(t) ? comparers[t].Equals(valueX, valueY) :
+                valueX.Equals(valueY);
+              if (!result && null != differences) { differences.Add(string.Empty, valueY.ToString()); }
+              return result;
+            };
           return;
         }
 
         var x = Expression.Parameter(t, "x");
         var y = Expression.Parameter(t, "y");
         var customComparers = Expression.Parameter(typeof(IDictionary<Type, IEqualityComparer>), "customComparers");
+        var diffs = Expression.Parameter(typeof(Dictionary<string, string>), "differences");
 
         if (typeof(IEnumerable<>).IsGenericInterfaceAssignableFrom(t))
         {
           Type genericTypeParam = (typeof(IEnumerable<>)).GetGenericInterfaceTypeParameters(t).First();
           //Type genericType = typeof(IEnumerable<>).MakeGenericType(genericTypeParam);
-          Compare = Expression.Lambda<Func<T, T, IDictionary<Type, IEqualityComparer>, bool>>(SequencesOfTypeAreEqual(x, y, genericTypeParam, customComparers), x, y, customComparers)
+          Compare = Expression.Lambda<Func<T, T, IDictionary<Type, IEqualityComparer>, Dictionary<string, string>, bool>>(
+            SequencesOfTypeAreEqual(x, y, genericTypeParam, customComparers, diffs), x, y, customComparers, diffs)
             .Compile();
           return;
         };
@@ -123,15 +159,16 @@ namespace EqualityComparer
         var members = t.GetProperties(BindingFlags.Public | BindingFlags.Instance).OfType<MemberInfo>().Union(t.GetFields(BindingFlags.Public | BindingFlags.Instance)).ToArray();
         if (members.Length == 0) { return; }
 
-        Expression body = CallExpressionIfNoComparer(BuildRecursiveComparison(members, x, y, customComparers, null, null),
-          customComparers, t, x, y);
-        Compare = Expression.Lambda<Func<T, T, IDictionary<Type, IEqualityComparer>, bool>>(body, x, y, customComparers)
+        Expression body = CallExpressionIfNoComparer(BuildRecursiveComparison(members, x, y, customComparers, diffs, null, null),
+          customComparers, diffs, t, x, y);
+        Compare = Expression.Lambda<Func<T, T, IDictionary<Type, IEqualityComparer>, Dictionary<string, string>, bool>>(
+          body, x, y, customComparers, diffs)
           .Compile();
       }
-      private static MethodCallExpression SequencesOfTypeAreEqual(Expression xProperty, Expression yProperty, Type genericTypeParam, Expression comparers)
+      private static MethodCallExpression SequencesOfTypeAreEqual(Expression xProperty, Expression yProperty, Type genericTypeParam, Expression comparers, Expression differences)
       {
         return Expression.Call(typeof(System.Linq.Enumerable), "SequenceEqual", new Type[] { genericTypeParam },
-          new Expression[] { xProperty, yProperty, Expression.Call(typeof(GenericEqualityComparer<>).MakeGenericType(genericTypeParam), "ByAllMembers", null, Expression.Property(comparers, "Values")) });
+          new Expression[] { xProperty, yProperty, Expression.Call(typeof(GenericEqualityComparer<>).MakeGenericType(genericTypeParam), "ByAllMembersImpl", null, Expression.Property(comparers, "Values"), differences) });
       }
 
       private static BinaryExpression CallComparerIfAvailable(Expression comparers, Type memberType, Expression xPropertyOrField, Expression yPropertyOrField)
@@ -144,8 +181,9 @@ namespace EqualityComparer
             typeof(IEqualityComparer<>).MakeGenericType(memberType)), "Equals", null, xPropertyOrField, yPropertyOrField));
       }
 
-      private static BinaryExpression CallExpressionIfNoComparer(Expression comparison, ParameterExpression comparers, Type memberType, Expression xPropertyOrField, Expression yPropertyOrField)
+      private static BinaryExpression CallExpressionIfNoComparer(Expression comparison, ParameterExpression comparers, ParameterExpression differences, Type memberType, Expression xPropertyOrField, Expression yPropertyOrField)
       {
+        // TODO: must integrate recording differences here
         return BinaryExpression.Or(
           CallComparerIfAvailable(comparers, memberType, xPropertyOrField, yPropertyOrField),
             Expression.AndAlso(
@@ -173,7 +211,7 @@ namespace EqualityComparer
         return recursiveProperties == null ? completedExpression : Expression.AndAlso(recursiveProperties, completedExpression);
       }
 
-      private static Expression BuildRecursiveComparison(MemberInfo[] members, Expression x, Expression y, ParameterExpression comparers, BinaryExpression parentNullChecks, Expression body)
+      private static Expression BuildRecursiveComparison(MemberInfo[] members, Expression x, Expression y, ParameterExpression comparers, ParameterExpression differences, BinaryExpression parentNullChecks, Expression body)
       {
         //nothing to see here -- move on
         if (members.Length == 0)
@@ -190,7 +228,7 @@ namespace EqualityComparer
 
           if (memberType.IsValueType || (memberType.ImplementsItsOwnEqualsMethod() && !memberType.IsAnonymous()))
           {
-            var propEqual = CallExpressionIfNoComparer(Expression.Equal(xPropertyOrField, yPropertyOrField), comparers, memberType, xPropertyOrField, yPropertyOrField);
+            var propEqual = CallExpressionIfNoComparer(Expression.Equal(xPropertyOrField, yPropertyOrField), comparers, differences, memberType, xPropertyOrField, yPropertyOrField);
 
             // this type supports value comparison so we can just compare it.
             propertyEqualities = propertyEqualities == null ? propEqual : Expression.AndAlso(propertyEqualities, propEqual);
@@ -201,7 +239,7 @@ namespace EqualityComparer
           {
             //the refs are the same OR
             var propEqual = CallExpressionIfNoComparer(Expression.ReferenceEqual(xPropertyOrField, yPropertyOrField),
-              comparers, memberType, xPropertyOrField, yPropertyOrField);
+              comparers, differences, memberType, xPropertyOrField, yPropertyOrField);
 
             propertyEqualities = propertyEqualities == null ? propEqual : Expression.AndAlso(propertyEqualities, propEqual);
             //i.e. (x.Property == y.Property) && (x.Property2 == y.Property2) ....
@@ -212,7 +250,7 @@ namespace EqualityComparer
 
             recursiveProperties = CustomPropertyComparison(xPropertyOrField, yPropertyOrField, parentNullChecks, recursiveProperties, (nullCheckToThisDepth) =>
               //and call SequenceEqual on the two sequences, passing a custom IEqualityComparer
-              SequencesOfTypeAreEqual(xPropertyOrField, yPropertyOrField, genericTypeParam, comparers));
+              SequencesOfTypeAreEqual(xPropertyOrField, yPropertyOrField, genericTypeParam, comparers, differences));
           }
           // this type does not support value comparison, so we must recurse and find it's properties.
           else
@@ -221,8 +259,8 @@ namespace EqualityComparer
               //and either use a passed comparer or recurse the property and all it's nested properties
               CallExpressionIfNoComparer(
                 BuildRecursiveComparison(memberType.GetProperties(BindingFlags.Public | BindingFlags.Instance).OfType<MemberInfo>().Union(memberType.GetFields(BindingFlags.Public | BindingFlags.Instance)).ToArray(),
-                  xPropertyOrField, yPropertyOrField, comparers, nullCheckToThisDepth, recursiveProperties),
-                comparers, memberType, xPropertyOrField, yPropertyOrField));
+                  xPropertyOrField, yPropertyOrField, comparers, differences, nullCheckToThisDepth, recursiveProperties),
+                comparers, differences, memberType, xPropertyOrField, yPropertyOrField));
           }
         }
 
