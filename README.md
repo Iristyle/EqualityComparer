@@ -63,7 +63,7 @@ Should work properly with:
 
 ### GenericEqualityComparer
 
-In addition to being able to create a new instance of a GenericEqualityComparer<T> with an anonymous Func<T,T,bool>, the GenericEqualityComparer class has a ```ByAllMembers``` static 
+In addition to being able to create a new instance of a GenericEqualityComparer<T> with an anonymous Func<T,T,bool>, the GenericEqualityComparer class has a ```ByAllMembers``` static
 which will recursively examine the type and generate a (cached) comparison Expression.
 
 Given this class:
@@ -117,7 +117,7 @@ ByAllMembers also has an overload that lets you specify comparers to use when a 
 ## Similar Projects
 
 * [AutoFixture](http://autofixture.codeplex.com/) includes a library called Ploeh.SemanticComparison .  I haven't checked out all the details, but it does pack a Fluent interface.
-* [AnonymousComparer](http://linqcomparer.codeplex.com/) - the AnonymousComparer looks very similar to the GenericEqualityComparer class in our library, except for some syntactical differences.  It doesn't look like there are options to override the behavior of comparisons either. 
+* [AnonymousComparer](http://linqcomparer.codeplex.com/) - the AnonymousComparer looks very similar to the GenericEqualityComparer class in our library, except for some syntactical differences.  It doesn't look like there are options to override the behavior of comparisons either.
 * [System.DataStructures.FuncComparer](http://adjunct.codeplex.com/) - looks like a basic implementation of a Func<T,T,bool> IEqualityComparer.
 
 ## Future Improvements
@@ -126,7 +126,7 @@ ByAllMembers also has an overload that lets you specify comparers to use when a 
 
 ## Contributing
 
-Fork the code, and submit a pull request!  
+Fork the code, and submit a pull request!
 
 Any useful changes are welcomed.  If you have an idea you'd like to see implemented that strays far from the simple spirit of the application, ping us first so that we're on the same page.
 
