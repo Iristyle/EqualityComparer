@@ -74,13 +74,9 @@ namespace EqualityComparer
       return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y));
     }
 
-    //TODO: perhaps this should be an out
-    public static GenericEqualityComparer<T> ByAllMembers(Dictionary<string, string> differences)
+    public static GenericEqualityComparer<T> ByAllMembers(out Dictionary<string, string> differences)
     {
-      //TODO: internal calls should be allowed to pass null as an optimization, but we don't external callers to... hmm...
-      if (null == differences) { throw new ArgumentNullException("differences"); }
-
-      return ByAllMembersImpl(new IEqualityComparer[] {}, differences);
+      return ByAllMembersImpl(new IEqualityComparer[] {}, out differences);
     }
 
     /// <summary>
@@ -96,22 +92,20 @@ namespace EqualityComparer
       return new GenericEqualityComparer<T>((x, y) => MemberComparer.Equal(x, y, customComparers));
     }
 
-    public static GenericEqualityComparer<T> ByAllMembers(IEnumerable<IEqualityComparer> customComparers, Dictionary<string, string> differences)
+    public static GenericEqualityComparer<T> ByAllMembers(IEnumerable<IEqualityComparer> customComparers, out Dictionary<string, string> differences)
     {
-      if (null == differences) { throw new ArgumentNullException("differences"); }
-      return ByAllMembersImpl(customComparers, differences);
+      return ByAllMembersImpl(customComparers, out differences);
     }
 
-    internal static GenericEqualityComparer<T> ByAllMembersImpl(IEnumerable<IEqualityComparer> customComparers, Dictionary<string, string> differences)
+    internal static GenericEqualityComparer<T> ByAllMembersImpl(IEnumerable<IEqualityComparer> customComparers, out Dictionary<string, string> differences)
     {
+      differences = new Dictionary<string,string>();
+      var closureDifferences = differences;
+
       return new GenericEqualityComparer<T>((x, y) =>
       {
         var diffs = MemberComparer.Differences(x, y, customComparers);
-        if (null == differences) 
-          { differences = diffs; }
-        else
-          { differences = differences.Union(diffs).ToDictionary(pair => pair.Key, pair => pair.Value); }
-
+        closureDifferences = closureDifferences.Union(diffs).ToDictionary(pair => pair.Key, pair => pair.Value);
         return (diffs.Count == 0);
       });
     } 
